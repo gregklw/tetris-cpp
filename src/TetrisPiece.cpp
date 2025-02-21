@@ -1,6 +1,6 @@
 #include "../header/TetrisPiece.h"
 
-TetrisPiece::TetrisPiece(std::vector<TetrisBlock>& blocks)
+TetrisPiece::TetrisPiece(std::array<TetrisBlock, 4>& blocks) : blocks(blocks)
 {
 	this->blocks = blocks;
 }

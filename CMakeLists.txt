@@ -12,6 +12,6 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(main src/main.cpp  "header/TetrisBlock.h" "src/TetrisBlock.cpp" "src/TetrisPiece.cpp" "header/TetrisPiece.h")
+add_executable(main src/main.cpp  "header/TetrisBlock.h" "src/TetrisBlock.cpp" "src/TetrisPiece.cpp" "header/TetrisPiece.h" "src/GameArea.cpp" "header/GameArea.h" "header/GameInfo.h")
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics SFML::Audio)

@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+extern int blockSize;
+
 class TetrisBlock
 {
 public:
@@ -11,7 +13,6 @@ public:
 	~TetrisBlock();
 	
 private:
-	const static int blockSize = 50;
 	sf::RectangleShape blockShape;
 	sf::Vector2f position;
 	sf::Vector2f size;
