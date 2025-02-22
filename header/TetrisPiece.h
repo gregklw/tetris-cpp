@@ -4,13 +4,15 @@
 class TetrisPiece
 {
 public:
-	TetrisPiece(std::array<TetrisBlock, 4>& blocks);
-
-	void movePiece(sf::Vector2f amountToMove);
+	TetrisPiece(sf::Color color);
+	std::vector<TetrisBlock> blocks;
+	void moveLeft();
+	void moveRight();
+	void moveDown();
 	void update(sf::RenderWindow& window);
 
 	~TetrisPiece();
 
 private:
-	std::array<TetrisBlock, 4> blocks;
+	void movePiece(sf::Vector2f amountToMove);
 };

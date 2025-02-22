@@ -6,8 +6,8 @@ TetrisBlock::TetrisBlock(sf::Vector2f startPosition, sf::Color color)
 	blockShape.setOutlineColor(sf::Color::White);
 	
 	blockShape.setFillColor(color);
-	position = startPosition;
-	setSize(sf::Vector2f(blockSize, blockSize));
+	blockShape.setSize(sf::Vector2f(blockSize, blockSize));
+	blockPosition = startPosition;
 }
 
 TetrisBlock::~TetrisBlock()
@@ -16,19 +16,25 @@ TetrisBlock::~TetrisBlock()
 
 void TetrisBlock::update(sf::RenderWindow& window)
 {
-	blockShape.setPosition(position);
-	blockShape.setSize(size);
+	blockShape.setPosition(sf::Vector2f(blockPosition.x * blockSize, blockPosition.y * blockSize));
+	std::cout << blockShape.getPosition().y << "blockshape position \n";
+	std::cout << blockPosition.y << "block position \n";
 	window.draw(blockShape);
 }
 
 void TetrisBlock::moveBlock(sf::Vector2f position)
 {
-	this->position += position;
+	blockPosition += sf::Vector2f(position);
 }
 
-void TetrisBlock::setSize(sf::Vector2f size)
+void TetrisBlock::setBlockPosition(sf::Vector2f& blockPosition)
 {
-	this->size = size;
+	this->blockPosition = blockPosition;
+}
+
+sf::Vector2f TetrisBlock::getBlockPosition()
+{
+	return blockPosition;
 }
 
 

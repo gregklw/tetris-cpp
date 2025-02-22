@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 extern int blockSize;
 
@@ -9,11 +10,11 @@ public:
 	TetrisBlock(sf::Vector2f startPosition, sf::Color color);
 	void update(sf::RenderWindow& window);
 	void moveBlock(sf::Vector2f position);
-	void setSize(sf::Vector2f size);
+	void setBlockPosition(sf::Vector2f& blockPosition);
+	sf::Vector2f getBlockPosition();
+	sf::RectangleShape blockShape;
 	~TetrisBlock();
 	
 private:
-	sf::RectangleShape blockShape;
-	sf::Vector2f position;
-	sf::Vector2f size;
+	sf::Vector2f blockPosition;
 };

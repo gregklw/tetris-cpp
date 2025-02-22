@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "../header/TetrisPiece.h"
 #include "../header/GameArea.h"
+#include "../header/Cell.h"
 #include "../header/GameInfo.h"
 
 int main()
@@ -8,14 +9,7 @@ int main()
 	auto window = sf::RenderWindow(sf::VideoMode({ 1920u, 1080u }), "CMake SFML Project");
 	window.setFramerateLimit(144);
 
-	std::array<TetrisBlock, 4> blocks = {
-		TetrisBlock(sf::Vector2f(0, 0),  sf::Color::Green),
-		TetrisBlock(sf::Vector2f(0, 50), sf::Color::Green),
-		TetrisBlock(sf::Vector2f(0, 100), sf::Color::Green),
-		TetrisBlock(sf::Vector2f(0, 150), sf::Color::Green)
-	};
-
-	TetrisPiece testPiece(blocks);
+	TetrisPiece testPiece(sf::Color::Green);
 
 	GameArea gameArea = GameArea();
 
@@ -33,36 +27,37 @@ int main()
 		sf::Time t1 = sf::milliseconds(50);
 		sf::sleep(t1);
 
+		//check if piece collides into anything
+
+
 		dropTimer++;
 
 		if (dropTimer > 10)
 		{
-			testPiece.movePiece(sf::Vector2f(0, blockSize));
+			//testPiece.moveDown();
 			dropTimer = 0;
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right) && !gameArea.checkHorizontalCollision(testPiece, sf::Vector2f(1,0)))
 		{
-			// left key is pressed: move our character
-			testPiece.movePiece(sf::Vector2f(blockSize, 0));
+			testPiece.moveRight();
 		}
 
-		//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
-		//{
-		//	// left key is pressed: move our character
-		//	testPiece.movePiece(sf::Vector2f(0, -blockSize));
-		//}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) && !gameArea.checkHorizontalCollision(testPiece, sf::Vector2f(-1, 0)))
+		{
+			testPiece.moveLeft();
+		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
 		{
-			// left key is pressed: move our character
-			testPiece.movePiece(sf::Vector2f(0, blockSize));
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
-		{
-			// left key is pressed: move our character
-			testPiece.movePiece(sf::Vector2f(-blockSize, 0));
+			if (!gameArea.checkVerticalCollision(testPiece))
+			{
+				testPiece.moveDown();
+			}
+			else
+			{
+				gameArea.occupyCells(testPiece);
+			}
 		}
 
 		window.clear();
