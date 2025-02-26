@@ -4,7 +4,7 @@
 class TetrisPiece
 {
 public:
-	TetrisPiece(sf::Color color);
+	TetrisPiece(std::array<sf::Vector2f, 4> blockIndices, sf::Color color);
 	std::vector<TetrisBlock> blocks;
 	void moveLeft();
 	void moveRight();

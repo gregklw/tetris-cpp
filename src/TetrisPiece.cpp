@@ -1,14 +1,13 @@
 #include "../header/TetrisPiece.h"
 
-TetrisPiece::TetrisPiece(sf::Color color)
+TetrisPiece::TetrisPiece(std::array<sf::Vector2f, 4> blockIndices, sf::Color color)
 {
-	std::vector<TetrisBlock> blocks
+	std::vector<TetrisBlock> blocks;
+
+	for (int i = 0; i < blockIndices.size(); i++)
 	{
-		TetrisBlock(sf::Vector2f(0, 0),  color),
-		TetrisBlock(sf::Vector2f(0, 1), color),
-		TetrisBlock(sf::Vector2f(0, 2), color),
-		TetrisBlock(sf::Vector2f(0, 3), color)
-	};
+		blocks.push_back(TetrisBlock(blockIndices[i], color));
+	}
 
 	this->blocks = blocks;
 }

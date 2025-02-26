@@ -12,6 +12,9 @@ public:
 	Cell(int gridPosX, int gridPosY);
 	sf::RectangleShape cellVisual;
 	void draw(sf::RenderWindow& window);
-	bool isOccupied;
+	void occupyCell(sf::Color color);
+	void copyCell(Cell cell);
+	void clearCell();
+	bool occupied;
 	~Cell();
 };
