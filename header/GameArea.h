@@ -5,7 +5,7 @@
 #include <unordered_set>
 
 extern int blockSize;
-extern sf::Color gameBorderColor;
+extern sf::Color emptyBorderColor;
 extern sf::Color gameBackgroundColor;
 extern sf::Vector2f gameAreaDimensions;
 extern std::vector<TetrisPiece> tetraminoList;
@@ -16,11 +16,13 @@ public:
 	GameArea();
 
 	void update(sf::RenderWindow& window);
+	void previewHardDrop(sf::RenderWindow& window, TetrisPiece piece);
 	bool checkHorizontalCollision(TetrisPiece piece, sf::Vector2f velocity);
 	bool checkVerticalCollision(TetrisPiece piece);
 	void occupyCells(TetrisPiece& piece);
 	void checkAndClearRow(int lowestRowToStart);
 	void clearRow(int row);
+	void updateGameAfterLineClear(TetrisPiece& piece);
 	void moveRowsDownAfterClearing(int clearedRow);
 	std::vector<std::vector<Cell>> grid;
 	TetrisPiece getNewPiece();
@@ -29,5 +31,4 @@ public:
 
 private:
 	sf::RectangleShape gameAreaVisual;
-
 };

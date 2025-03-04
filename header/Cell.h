@@ -2,7 +2,8 @@
 #include <SFML/Graphics.hpp>
 
 extern int blockSize;
-extern sf::Color gameBorderColor;
+extern sf::Color emptyBorderColor;
+extern sf::Color occupiedBorderColor;
 extern sf::Color gameBackgroundColor;
 
 class Cell

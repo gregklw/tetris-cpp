@@ -3,7 +3,7 @@
 GameArea::GameArea()
 {
 	gameAreaVisual.setOutlineThickness(-blockSize / 10.0f);
-	gameAreaVisual.setOutlineColor(gameBorderColor);
+	gameAreaVisual.setOutlineColor(emptyBorderColor);
 	gameAreaVisual.setFillColor(gameBackgroundColor);
 	gameAreaVisual.setSize(sf::Vector2f(gameAreaDimensions.x * blockSize, gameAreaDimensions.y * blockSize));
 
@@ -28,6 +28,23 @@ void GameArea::update(sf::RenderWindow& window)
 			grid[y][x].draw(window);
 		}
 	}
+}
+
+void GameArea::previewHardDrop(sf::RenderWindow& window, TetrisPiece piece)
+{
+	TetrisPiece preview(piece);
+
+	for (int i = 0; i < preview.blocks.size(); i++)
+	{
+		preview.blocks[i].blockShape.setFillColor(gameBackgroundColor);
+	}
+
+	sf::Vector2f down = sf::Vector2f(0, 1);
+	while (!checkVerticalCollision(preview))
+	{
+		preview.movePiece(down);
+	}
+	preview.update(window);
 }
 
 bool GameArea::checkHorizontalCollision(TetrisPiece piece, sf::Vector2f velocity)
@@ -139,6 +156,23 @@ void GameArea::clearRow(int row)
 	}
 }
 
+void GameArea::updateGameAfterLineClear(TetrisPiece& piece)
+{
+	occupyCells(piece);
+	int lowestRowToStart = 0;
+
+	for (int i = 0; i < piece.blocks.size(); i++)
+	{
+		int yPos = piece.blocks[i].getBlockPosition().y;
+		if (lowestRowToStart < yPos)
+		{
+			lowestRowToStart = yPos;
+		}
+	}
+	checkAndClearRow(lowestRowToStart);
+	piece = getNewPiece();
+}
+
 void GameArea::moveRowsDownAfterClearing(int clearedRow)
 {
 	std::cout << clearedRow << "number\n";
@@ -153,6 +187,7 @@ void GameArea::moveRowsDownAfterClearing(int clearedRow)
 			/*Cell cellToCopy(grid[clearedRow - 1][i]);
 			grid[clearedRow][i].cellVisual = grid[clearedRow - 1][i].cellVisual;*/
 			grid[clearedRow][i].copyCell(grid[clearedRow - 1][i]);
+			grid[clearedRow - 1][i].clearCell();
 		}
 		clearedRow--;
 	}

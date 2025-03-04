@@ -3,14 +3,15 @@
 #include "../header/GameArea.h"
 #include "../header/Cell.h"
 #include "../header/GameInfo.h"
+#include "../header/GameController.h"
 
 extern std::vector<TetrisPiece> tetraminoList;
+extern int dropTimerCooldown;
+extern int sensitivityCooldown;
 
 TetrisPiece testPiece = tetraminoList[std::rand() % tetraminoList.size()];
 GameArea gameArea = GameArea();
-void checkLandedOnPieceBelow();
-void hardDrop();
-void rotateShape();
+GameController gameController = GameController();
 
 int main()
 {
@@ -21,6 +22,7 @@ int main()
 	bool rotateOnPress = false;
 
 	int dropTimer = 0;
+	int sensitivityTimer = 0;
 
 	while (window.isOpen())
 	{
@@ -30,159 +32,76 @@ int main()
 			{
 				window.close();
 			}
-
 			if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
 			{
-				if (keyPressed->scancode == sf::Keyboard::Scan::Space && !hardDroppedOnPress)
+				if (keyPressed->scancode == sf::Keyboard::Scancode::Up)
 				{
-					hardDroppedOnPress = true;
-					hardDrop();
+					gameController.rotatePiece(testPiece, gameArea);
+					gameController.rotateOnPress = true;
 				}
 
-				if (keyPressed->scancode == sf::Keyboard::Scan::Up && !rotateOnPress)
+				if (keyPressed->scancode == sf::Keyboard::Scancode::Space)
 				{
-					rotateOnPress = true;
-					rotateShape();
+					gameController.hardDropPiece(testPiece, gameArea);
+					gameController.hardDroppedOnPress = true;
+				}
+
+				if (keyPressed->scancode == sf::Keyboard::Scancode::Left)
+				{
+					gameController.movePieceLeft(testPiece, gameArea);
+				}
+
+				if (keyPressed->scancode == sf::Keyboard::Scancode::Right)
+				{
+					gameController.movePieceRight(testPiece, gameArea);
+				}
+
+				if (keyPressed->scancode == sf::Keyboard::Scancode::Down)
+				{
+					gameController.movePieceDown(testPiece, gameArea);
 				}
 			}
 
 			if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>())
 			{
-				if (keyReleased->scancode == sf::Keyboard::Scan::Space)
+				if (keyReleased->scancode == sf::Keyboard::Scancode::Up)
 				{
-					hardDroppedOnPress = false;
+					gameController.rotateOnPress = false;
 				}
-				if (keyReleased->scancode == sf::Keyboard::Scan::Up)
+
+				if (keyReleased->scancode == sf::Keyboard::Scancode::Space)
 				{
-					rotateOnPress = false;
+					gameController.hardDroppedOnPress = false;
 				}
 			}
-
 		}
+
 		sf::Time t1 = sf::milliseconds(50);
 		sf::sleep(t1);
 
 		//check if piece collides into anything
 
 		dropTimer++;
+		sensitivityTimer++;
 
-		if (dropTimer > 10)
+		if (dropTimer > dropTimerCooldown)
 		{
-			checkLandedOnPieceBelow();
+			gameController.movePieceDown(testPiece, gameArea);
 			dropTimer = 0;
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right) && !gameArea.checkHorizontalCollision(testPiece, sf::Vector2f(1,0)))
+		if (sensitivityTimer > sensitivityCooldown)
 		{
-			testPiece.moveRight();
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) && !gameArea.checkHorizontalCollision(testPiece, sf::Vector2f(-1, 0)))
-		{
-			testPiece.moveLeft();
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
-		{
-			checkLandedOnPieceBelow();
+			
+			sensitivityTimer = 0;
 		}
 
 		window.clear();
 
 		gameArea.update(window);
+		gameArea.previewHardDrop(window, testPiece);
 		testPiece.update(window);
 
 		window.display();
-	}
-}
-
-void checkLandedOnPieceBelow()
-{
-	if (!gameArea.checkVerticalCollision(testPiece))
-	{
-		testPiece.moveDown();
-	}
-	else
-	{
-		gameArea.occupyCells(testPiece);
-		int lowestRowToStart = 0;
-
-		for (int i = 0; i < testPiece.blocks.size(); i++)
-		{
-			int yPos = testPiece.blocks[i].getBlockPosition().y;
-			if (lowestRowToStart < yPos)
-			{
-				lowestRowToStart = yPos;
-			}
-		}
-
-		std::cout << lowestRowToStart << " Lowest Row \n";
-
-		gameArea.checkAndClearRow(lowestRowToStart);
-		testPiece = gameArea.getNewPiece();
-	}
-}
-
-void hardDrop()
-{
-	while (!gameArea.checkVerticalCollision(testPiece))
-	{
-		testPiece.moveDown();
-	}
-	gameArea.occupyCells(testPiece);
-	int lowestRowToStart = gameAreaDimensions.y - 1;
-	for (int i = 0; testPiece.blocks.size(); i++)
-	{
-		int yPos = testPiece.blocks[i].getBlockPosition().y;
-		if (lowestRowToStart > yPos)
-		{
-			lowestRowToStart = yPos;
-		}
-	}
-	gameArea.checkAndClearRow(lowestRowToStart);
-	testPiece = gameArea.getNewPiece();
-}
-
-void rotateShape()
-{
-	sf::Vector2f pivotPos = testPiece.blocks[0].getBlockPosition();
-	std::vector<sf::Vector2f> newPoints;
-	bool isObstructed = false;
-
-	for (int i = 0; i < testPiece.blocks.size(); i++)
-	{
-		sf::Vector2f oldPos = testPiece.blocks[i].getBlockPosition();
-
-		float newX = -(oldPos.y - pivotPos.y) + pivotPos.x;
-		float newY = oldPos.x - pivotPos.x + pivotPos.y;
-
-
-		if (newX < 0 || newX >= gameAreaDimensions.x || newY < 0 || newY >= gameAreaDimensions.y || gameArea.grid[newY][newX].occupied)
-		{
-			isObstructed = true;
-		}
-
-		newPoints.push_back(sf::Vector2f(newX, newY));
-
-		/*# rotates the shape clockwise
-			def rotateCW(self) :
-			newBlockX = [0, 0, 0, 0]
-			newBlockY = [0, 0, 0, 0]
-			#rotate all of the blocks
-			for i in range(self.numblocks) :
-				newBlockX[i] = -(self.blockList[i].gridYpos - self.blockList[0].gridYpos) +
-				self.blockList[0].gridXpos
-				newBlockY[i] = (self.blockList[i].gridXpos - self.blockList[0].gridXpos) +
-				self.blockList[0].gridYpos
-				self.blockList[i].gridXpos = newBlockX[i]
-				self.blockList[i].gridYpos = newBlockY[i]*/
-	}
-
-	if (!isObstructed)
-	{
-		for (int i = 0; i < newPoints.size(); i++)
-		{
-			testPiece.blocks[i].setBlockPosition(newPoints[i]);
-		}
 	}
 }
