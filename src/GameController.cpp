@@ -19,7 +19,7 @@ void GameController::checkLandedOnPieceBelow(TetrisPiece& piece, GameArea& gameA
 
 		for (int i = 0; i < piece.blocks.size(); i++)
 		{
-			int yPos = piece.blocks[i].getBlockPosition().y;
+			int yPos = piece.blocks[i].getGridPosition().y;
 			if (lowestRowToStart < yPos)
 			{
 				lowestRowToStart = yPos;
@@ -80,23 +80,23 @@ void GameController::rotatePiece(TetrisPiece& piece, GameArea& gameArea)
 {
 	if (rotateOnPress) return;
 
-	std::vector<TetrisBlock> &targetBlocks = piece.blocks;
+	std::vector<TetrisBlock>& targetBlocks = piece.blocks;
 
 	for (int i = 0; i < targetBlocks.size(); i++)
 	{
-		sf::Vector2f pivotPos = targetBlocks[i].getBlockPosition();
+		sf::Vector2f pivotPos(targetBlocks[i].getGridPosition().x, targetBlocks[i].getGridPosition().y);
 		std::vector<sf::Vector2f> newPoints;
 		bool isObstructed = false;
 
 		for (int j = 0; j < targetBlocks.size(); j++)
 		{
-			sf::Vector2f oldPos = targetBlocks[j].getBlockPosition();
+			sf::Vector2f oldPos(targetBlocks[j].getGridPosition().x, targetBlocks[j].getGridPosition().y);
 
 			float newX = -(oldPos.y - pivotPos.y) + pivotPos.x;
 			float newY = oldPos.x - pivotPos.x + pivotPos.y;
 
 
-			if (newX < 0 || newX >= gameAreaDimensions.x || newY < 0 || newY >= gameAreaDimensions.y || gameArea.grid[newY][newX].occupied)
+			if (newX < 0 || newX >=  gameAreaDimensions.x || newY < 0 || newY >= gameAreaDimensions.y || gameArea.grid[newY][newX].occupied)
 			{
 				isObstructed = true;
 			}
@@ -122,7 +122,7 @@ void GameController::rotatePiece(TetrisPiece& piece, GameArea& gameArea)
 		{
 			for (int j = 0; j < newPoints.size(); j++)
 			{
-				targetBlocks[j].setBlockPosition(newPoints[j]);
+				targetBlocks[j].setPosition(sf::Vector2f(newPoints[j].x, newPoints[j].y));
 			}
 			break;
 		}

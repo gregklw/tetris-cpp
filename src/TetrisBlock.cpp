@@ -1,13 +1,14 @@
 #include "../header/TetrisBlock.h"
 
-TetrisBlock::TetrisBlock(sf::Vector2f startPosition, sf::Color color)
+TetrisBlock::TetrisBlock(sf::Vector2f gridPosition, sf::Color color)
 {
+	this->gridPosition = gridPosition;
 	blockShape.setOutlineThickness(-blockSize / 10.0f);
-	blockShape.setOutlineColor(sf::Color::White);
+	blockShape.setOutlineColor(blockBorderColor);
 	
 	blockShape.setFillColor(color);
 	blockShape.setSize(sf::Vector2f(blockSize, blockSize));
-	blockPosition = startPosition;
+	blockPosition = gameAreaStartPosition + sf::Vector2f(gridPosition.x * blockSize, gridPosition.y * blockSize);
 }
 
 TetrisBlock::~TetrisBlock()
@@ -16,23 +17,23 @@ TetrisBlock::~TetrisBlock()
 
 void TetrisBlock::update(sf::RenderWindow& window)
 {
-	blockShape.setPosition(sf::Vector2f(blockPosition.x * blockSize, blockPosition.y * blockSize));
+	blockShape.setPosition(sf::Vector2f(blockPosition.x, blockPosition.y));
 	window.draw(blockShape);
 }
 
 void TetrisBlock::moveBlock(sf::Vector2f position)
 {
-	blockPosition += sf::Vector2f(position);
+	gridPosition += position;
+	blockPosition += sf::Vector2f(position.x * blockSize, position.y * blockSize);
 }
 
-void TetrisBlock::setBlockPosition(sf::Vector2f& blockPosition)
+void TetrisBlock::setPosition(sf::Vector2f position)
 {
-	this->blockPosition = blockPosition;
+	gridPosition = position;
+	blockPosition = gameAreaStartPosition + sf::Vector2f(position.x * blockSize, position.y * blockSize);
 }
 
-sf::Vector2f TetrisBlock::getBlockPosition()
+sf::Vector2f TetrisBlock::getGridPosition()
 {
-	return blockPosition;
+	return gridPosition;
 }
-
-

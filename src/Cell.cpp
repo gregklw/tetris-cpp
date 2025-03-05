@@ -1,13 +1,14 @@
 #include "../header/Cell.h"
 
-Cell::Cell(int gridPosX, int gridPosY)
+Cell::Cell(int gridPosX, int gridPosY, sf::Vector2f screenPosition)
 {
+	this->screenPosition = screenPosition;
 	this->gridPosX = gridPosX;
 	this->gridPosY = gridPosY;
 	occupied = false;
 	cellVisual.setSize(sf::Vector2f(blockSize, blockSize));
-	cellVisual.setPosition(sf::Vector2f(gridPosX * blockSize, gridPosY * blockSize));
-	cellVisual.setOutlineColor(emptyBorderColor);
+	cellVisual.setPosition(sf::Vector2f(screenPosition.x + gridPosX * blockSize, screenPosition.y + gridPosY * blockSize));
+	cellVisual.setOutlineColor(gameBackgroundColor);
 	cellVisual.setOutlineThickness(-1);
 	cellVisual.setFillColor(gameBackgroundColor);
 }

@@ -5,10 +5,12 @@
 int blockSize = 25;
 int dropTimerCooldown = 10;
 int sensitivityCooldown = 1;
-sf::Vector2f gameAreaDimensions(10, 20);
+sf::Vector2f gameAreaStartPosition(125, 100);
+sf::Vector2f gameAreaDimensions = sf::Vector2f(10, 20);
 sf::Color occupiedBorderColor = sf::Color::Black;
 sf::Color gameBackgroundColor = sf::Color(26,5,110);
 sf::Color emptyBorderColor = gameBackgroundColor;
+sf::Color blockBorderColor = sf::Color(125, 125, 125);
 
 /// <summary>
 /// List of tetraminos used for randomizing new shape for player.

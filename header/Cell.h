@@ -10,7 +10,8 @@ class Cell
 {
 public:
 	int gridPosX, gridPosY;
-	Cell(int gridPosX, int gridPosY);
+	sf::Vector2f screenPosition;
+	Cell(int gridPosX, int gridPosY, sf::Vector2f screenPosition);
 	sf::RectangleShape cellVisual;
 	void draw(sf::RenderWindow& window);
 	void occupyCell(sf::Color color);

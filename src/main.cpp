@@ -8,9 +8,10 @@
 extern std::vector<TetrisPiece> tetraminoList;
 extern int dropTimerCooldown;
 extern int sensitivityCooldown;
+extern sf::Vector2f gameAreaStartPosition;
 
-TetrisPiece testPiece = tetraminoList[std::rand() % tetraminoList.size()];
-GameArea gameArea = GameArea();
+GameArea gameArea = GameArea(gameAreaStartPosition);
+TetrisPiece testPiece = gameArea.getNewPiece();
 GameController gameController = GameController();
 
 int main()
