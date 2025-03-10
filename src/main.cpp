@@ -4,6 +4,7 @@
 #include "../header/Cell.h"
 #include "../header/GameInfo.h"
 #include "../header/GameController.h"
+#include "../header/GameUI.h"
 
 extern std::vector<TetrisPiece> tetraminoList;
 extern int dropTimerCooldown;
@@ -102,6 +103,7 @@ int main()
 		gameArea.update(window);
 		gameArea.previewHardDrop(window, testPiece);
 		testPiece.update(window);
+		displayGameUI(window);
 
 		window.display();
 	}

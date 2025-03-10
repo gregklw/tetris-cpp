@@ -60,10 +60,10 @@ std::vector<TetrisPiece> tetraminoList
 		TetrisPiece(
 		std::array<sf::Vector2f, 4>
 		{
+			sf::Vector2f(1,1),
 			sf::Vector2f(0,0),
 			sf::Vector2f(0,1),
-			sf::Vector2f(1,0),
-			sf::Vector2f(1,1)
+			sf::Vector2f(1,0)
 		}
 		, sf::Color(238, 255, 0)
 		),
