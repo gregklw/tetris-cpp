@@ -5,7 +5,7 @@ GameArea::GameArea(sf::Vector2f startPosition)
 	gameAreaVisual.setPosition(startPosition);
 	gameAreaVisual.setOutlineThickness(-blockSize / 10.0f);
 	gameAreaVisual.setOutlineColor(emptyBorderColor);
-	gameAreaVisual.setFillColor(gameBackgroundColor);
+	gameAreaVisual.setFillColor(gameAreaBackgroundColor);
 	gameAreaVisual.setSize(sf::Vector2f(gameAreaDimensions.x * blockSize, gameAreaDimensions.y * blockSize));
 
 	for (int y = 0; y < gameAreaDimensions.y; y++)
@@ -37,13 +37,13 @@ void GameArea::previewHardDrop(sf::RenderWindow& window, TetrisPiece piece)
 
 	for (int i = 0; i < preview.blocks.size(); i++)
 	{
-		preview.blocks[i].blockShape.setFillColor(gameBackgroundColor);
+		preview.blocks[i].blockShape.setFillColor(gameAreaBackgroundColor);
 	}
 
 	sf::Vector2f down = sf::Vector2f(0, 1);
 	while (!checkVerticalCollision(preview))
 	{
-		preview.movePiece(down);
+		preview.movePieceByGridPosition(down);
 	}
 	preview.update(window);
 }
@@ -184,20 +184,6 @@ void GameArea::moveRowsDownAfterClearing(int clearedRow)
 		clearedRow--;
 	}
 }
-
-TetrisPiece GameArea::getNewPiece()
-{
-	TetrisPiece newPiece = tetraminoList[std::rand() % tetraminoList.size()];
-	std::vector newBlocks = newPiece.blocks;
-	//for (int i = 0; i < newBlocks.size(); i++)
-	//{
-	//	newBlocks[i].moveBlock(gameAreaStartPosition);
-	//	//std::cout << newBlocks[i].getBlockPosition().x << ", " << newBlocks[i].getBlockPosition().y << "\n";
-	//}
-	newPiece.blocks = newBlocks;
-	return newPiece;
-}
-
 
 GameArea::~GameArea()
 {

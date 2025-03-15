@@ -2,8 +2,6 @@
 
 GameController::GameController()
 {
-	hardDroppedOnPress = false;
-	rotateOnPress = false;
 }
 
 void GameController::checkLandedOnPieceBelow(TetrisPiece& piece, GameArea& gameArea)
@@ -29,7 +27,7 @@ void GameController::checkLandedOnPieceBelow(TetrisPiece& piece, GameArea& gameA
 		std::cout << lowestRowToStart << " Lowest Row \n";
 
 		gameArea.checkAndClearRow(lowestRowToStart);
-		piece = gameArea.getNewPiece();
+		piece = getNewPiece();
 	}
 }
 
@@ -38,7 +36,7 @@ void GameController::movePieceLeft(TetrisPiece& piece, GameArea& gameArea)
 	sf::Vector2f left = sf::Vector2f(-1, 0);
 	if (!gameArea.checkHorizontalCollision(piece, left))
 	{
-		piece.movePiece(left);
+		piece.movePieceByGridPosition(left);
 	}
 }
 
@@ -47,7 +45,7 @@ void GameController::movePieceRight(TetrisPiece& piece, GameArea& gameArea)
 	sf::Vector2f right = sf::Vector2f(1, 0);
 	if (!gameArea.checkHorizontalCollision(piece, right))
 	{
-		piece.movePiece(right);
+		piece.movePieceByGridPosition(right);
 	}
 }
 
@@ -56,12 +54,39 @@ void GameController::movePieceDown(TetrisPiece& piece, GameArea& gameArea)
 	sf::Vector2f down = sf::Vector2f(0, 1);
 	if (!gameArea.checkVerticalCollision(piece))
 	{
-		piece.movePiece(down);
+		piece.movePieceByGridPosition(down);
 	}
 	else
 	{
 		//update game area
 		gameArea.updateGameAfterLineClear(piece);
+		holdPieceOnPress = false;
+	}
+}
+
+void GameController::holdPiece(TetrisPiece& piece, GameArea gameArea)
+{
+	if (!holdPieceOnPress)
+	{
+		TetrisPiece pieceToBeCached = TetrisPiece(piece);
+		if (heldPiecePointer == nullptr)
+		{
+			heldPiece = pieceToBeCached;
+			heldPiecePointer = &heldPiece;
+			
+			piece = getNewPiece();
+		}
+		else
+		{
+			piece = TetrisPiece(heldPiece);
+			heldPiece = pieceToBeCached;
+			piece.setGridPosition(sf::Vector2f(4,1));
+			for (int i = 0; i < piece.blocks.size(); i++)
+			{
+				std::cout << "Size: " << piece.blocks[i].getGridPosition().x << "/" << piece.blocks[i].getGridPosition().y << "\n";
+			}
+		}
+		heldPiece.setGridPosition(holdBoxLocation);
 	}
 }
 
@@ -74,6 +99,7 @@ void GameController::hardDropPiece(TetrisPiece& piece, GameArea& gameArea)
 		movePieceDown(piece, gameArea);
 	}
 	gameArea.updateGameAfterLineClear(piece);
+	holdPieceOnPress = false;
 }
 
 void GameController::rotatePiece(TetrisPiece& piece, GameArea& gameArea)
@@ -96,7 +122,7 @@ void GameController::rotatePiece(TetrisPiece& piece, GameArea& gameArea)
 			float newY = oldPos.x - pivotPos.x + pivotPos.y;
 
 
-			if (newX < 0 || newX >=  gameAreaDimensions.x || newY < 0 || newY >= gameAreaDimensions.y || gameArea.grid[newY][newX].occupied)
+			if (newX < 0 || newX >= gameAreaDimensions.x || newY < 0 || newY >= gameAreaDimensions.y || gameArea.grid[newY][newX].occupied)
 			{
 				isObstructed = true;
 			}
@@ -122,7 +148,7 @@ void GameController::rotatePiece(TetrisPiece& piece, GameArea& gameArea)
 		{
 			for (int j = 0; j < newPoints.size(); j++)
 			{
-				targetBlocks[j].setPosition(sf::Vector2f(newPoints[j].x, newPoints[j].y));
+				targetBlocks[j].setGridPosition(sf::Vector2f(newPoints[j].x, newPoints[j].y));
 			}
 			break;
 		}

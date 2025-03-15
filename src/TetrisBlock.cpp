@@ -21,13 +21,23 @@ void TetrisBlock::update(sf::RenderWindow& window)
 	window.draw(blockShape);
 }
 
-void TetrisBlock::moveBlock(sf::Vector2f position)
+void TetrisBlock::moveBlockByScreenPosition(sf::Vector2f position)
+{
+	blockPosition += sf::Vector2f(position.x * blockSize, position.y * blockSize);
+}
+
+void TetrisBlock::setScreenPosition(sf::Vector2f position)
+{
+	blockPosition = sf::Vector2f(position.x * blockSize, position.y * blockSize);
+}
+
+void TetrisBlock::moveBlockByGridPosition(sf::Vector2f position)
 {
 	gridPosition += position;
 	blockPosition += sf::Vector2f(position.x * blockSize, position.y * blockSize);
 }
 
-void TetrisBlock::setPosition(sf::Vector2f position)
+void TetrisBlock::setGridPosition(sf::Vector2f position)
 {
 	gridPosition = position;
 	blockPosition = gameAreaStartPosition + sf::Vector2f(position.x * blockSize, position.y * blockSize);

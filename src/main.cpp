@@ -10,9 +10,12 @@ extern std::vector<TetrisPiece> tetraminoList;
 extern int dropTimerCooldown;
 extern int sensitivityCooldown;
 extern sf::Vector2f gameAreaStartPosition;
+extern bool holdPieceOnPress;
+extern bool hardDroppedOnPress;
+extern bool rotateOnPress;
 
 GameArea gameArea = GameArea(gameAreaStartPosition);
-TetrisPiece testPiece = gameArea.getNewPiece();
+TetrisPiece currentPiece = getNewPiece();
 GameController gameController = GameController();
 
 int main()
@@ -20,11 +23,10 @@ int main()
 	auto window = sf::RenderWindow(sf::VideoMode({ 1280u, 720u }), "CMake SFML Project");
 	window.setFramerateLimit(144);
 
-	bool hardDroppedOnPress = false;
-	bool rotateOnPress = false;
-
 	int dropTimer = 0;
 	int sensitivityTimer = 0;
+
+	init();
 
 	while (window.isOpen())
 	{
@@ -38,29 +40,36 @@ int main()
 			{
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Up)
 				{
-					gameController.rotatePiece(testPiece, gameArea);
-					gameController.rotateOnPress = true;
+					gameController.rotatePiece(currentPiece, gameArea);
+					rotateOnPress = true;
 				}
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Space)
 				{
-					gameController.hardDropPiece(testPiece, gameArea);
-					gameController.hardDroppedOnPress = true;
+					gameController.hardDropPiece(currentPiece, gameArea);
+					hardDroppedOnPress = true;
 				}
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Left)
 				{
-					gameController.movePieceLeft(testPiece, gameArea);
+					gameController.movePieceLeft(currentPiece, gameArea);
 				}
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Right)
 				{
-					gameController.movePieceRight(testPiece, gameArea);
+					gameController.movePieceRight(currentPiece, gameArea);
 				}
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Down)
 				{
-					gameController.movePieceDown(testPiece, gameArea);
+					gameController.movePieceDown(currentPiece, gameArea);
+				}
+
+				if (keyPressed->scancode == sf::Keyboard::Scancode::RShift)
+				{
+					
+					gameController.holdPiece(currentPiece, gameArea);
+					holdPieceOnPress = true;
 				}
 			}
 
@@ -68,12 +77,12 @@ int main()
 			{
 				if (keyReleased->scancode == sf::Keyboard::Scancode::Up)
 				{
-					gameController.rotateOnPress = false;
+					rotateOnPress = false;
 				}
 
 				if (keyReleased->scancode == sf::Keyboard::Scancode::Space)
 				{
-					gameController.hardDroppedOnPress = false;
+					hardDroppedOnPress = false;
 				}
 			}
 		}
@@ -88,7 +97,7 @@ int main()
 
 		if (dropTimer > dropTimerCooldown)
 		{
-			gameController.movePieceDown(testPiece, gameArea);
+			gameController.movePieceDown(currentPiece, gameArea);
 			dropTimer = 0;
 		}
 
@@ -101,8 +110,8 @@ int main()
 		window.clear();
 
 		gameArea.update(window);
-		gameArea.previewHardDrop(window, testPiece);
-		testPiece.update(window);
+		gameArea.previewHardDrop(window, currentPiece);
+		currentPiece.update(window);
 		displayGameUI(window);
 
 		window.display();

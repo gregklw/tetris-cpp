@@ -8,9 +8,35 @@ int sensitivityCooldown = 1;
 sf::Vector2f gameAreaStartPosition(125, 100);
 sf::Vector2f gameAreaDimensions = sf::Vector2f(10, 20);
 sf::Color occupiedBorderColor = sf::Color::Black;
-sf::Color gameBackgroundColor = sf::Color(26,5,110);
-sf::Color emptyBorderColor = gameBackgroundColor;
+sf::Color gameAreaBackgroundColor = sf::Color(26,5,110);
+sf::Color emptyBorderColor = gameAreaBackgroundColor;
 sf::Color blockBorderColor = sf::Color(125, 125, 125);
+
+/// <summary>
+/// Piece that is used for display when being held.
+/// </summary>
+TetrisPiece heldPiece;
+TetrisPiece* heldPiecePointer = nullptr;
+
+/// <summary>
+/// Boolean to mark whether a hard drop action has been performed.
+/// </summary>
+bool hardDroppedOnPress = false;
+
+/// <summary>
+/// Boolean to mark whether a rotate action has been performed.
+/// </summary>
+bool rotateOnPress = false;
+
+/// <summary>
+/// Boolean to mark whether a hold piece action has been performed.
+/// </summary>
+bool holdPieceOnPress = false;
+
+/// <summary>
+/// Location of the holding box relative to the screen.
+/// </summary>
+sf::Vector2f holdBoxLocation(-3, 4);
 
 /// <summary>
 /// List of tetraminos used for randomizing new shape for player.
@@ -53,7 +79,7 @@ std::vector<TetrisPiece> tetraminoList
 			sf::Vector2f(0,1),
 			sf::Vector2f(2,1)
 		}
-		, sf::Color(255, 205, 5)
+		, sf::Color(252, 152, 3)
 		),
 
 		//box shape
@@ -106,3 +132,20 @@ std::vector<TetrisPiece> tetraminoList
 
 	}
 };
+
+TetrisPiece getNewPiece();
+
+inline inline TetrisPiece getNewPiece()
+{
+	TetrisPiece newPiece = tetraminoList[std::rand() % tetraminoList.size()];
+	//std::vector newBlocks = newPiece.blocks;
+	//for (int i = 0; i < newBlocks.size(); i++)
+	//{
+	//	newBlocks[i].moveBlock(gameAreaStartPosition);
+	//	//std::cout << newBlocks[i].getBlockPosition().x << ", " << newBlocks[i].getBlockPosition().y << "\n";
+	//}
+	//newPiece.blocks = newBlocks;
+	return newPiece;
+}
+
+

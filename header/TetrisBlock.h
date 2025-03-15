@@ -11,8 +11,10 @@ class TetrisBlock
 public:
 	TetrisBlock(sf::Vector2f startGridPosition, sf::Color color);
 	void update(sf::RenderWindow& window);
-	void moveBlock(sf::Vector2f position);
-	void setPosition(sf::Vector2f position);
+	void moveBlockByScreenPosition(sf::Vector2f position);
+	void setScreenPosition(sf::Vector2f position);
+	void moveBlockByGridPosition(sf::Vector2f position);
+	void setGridPosition(sf::Vector2f position);
 	sf::Vector2f getGridPosition();
 	sf::RectangleShape blockShape;
 	~TetrisBlock();

@@ -6,10 +6,11 @@
 
 extern int blockSize;
 extern sf::Color emptyBorderColor;
-extern sf::Color gameBackgroundColor;
+extern sf::Color gameAreaBackgroundColor;
 extern sf::Vector2f gameAreaDimensions;
 extern sf::Vector2f gameAreaStartPosition;
 extern std::vector<TetrisPiece> tetraminoList;
+extern TetrisPiece getNewPiece();
 
 class GameArea
 {
@@ -26,7 +27,6 @@ public:
 	void updateGameAfterLineClear(TetrisPiece& piece);
 	void moveRowsDownAfterClearing(int clearedRow);
 	std::vector<std::vector<Cell>> grid;
-	TetrisPiece getNewPiece();
 
 	~GameArea();
 

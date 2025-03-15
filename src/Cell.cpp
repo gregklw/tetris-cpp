@@ -8,9 +8,9 @@ Cell::Cell(int gridPosX, int gridPosY, sf::Vector2f screenPosition)
 	occupied = false;
 	cellVisual.setSize(sf::Vector2f(blockSize, blockSize));
 	cellVisual.setPosition(sf::Vector2f(screenPosition.x + gridPosX * blockSize, screenPosition.y + gridPosY * blockSize));
-	cellVisual.setOutlineColor(gameBackgroundColor);
+	cellVisual.setOutlineColor(gameAreaBackgroundColor);
 	cellVisual.setOutlineThickness(-1);
-	cellVisual.setFillColor(gameBackgroundColor);
+	cellVisual.setFillColor(gameAreaBackgroundColor);
 }
 
 void Cell::draw(sf::RenderWindow& window)
@@ -36,7 +36,7 @@ void Cell::clearCell()
 {
 	occupied = false;
 	cellVisual.setOutlineColor(emptyBorderColor);
-	cellVisual.setFillColor(gameBackgroundColor);
+	cellVisual.setFillColor(gameAreaBackgroundColor);
 }
 
 Cell::~Cell()
