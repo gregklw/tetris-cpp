@@ -52,7 +52,7 @@ inline void init()
 
 	sf::FloatRect nextTextRect = nextText.getGlobalBounds();
 
-	nextShapeBox.setSize(sf::Vector2f(125, 375));
+	nextShapeBox.setSize(sf::Vector2f(125, 450));
 	nextShapeBox.setPosition(sf::Vector2f(nextText.getPosition().x, nextText.getPosition().y + nextTextRect.size.y) + padding);
 	nextShapeBox.setOutlineColor(sf::Color::White);
 	nextShapeBox.setOutlineThickness(-5);
@@ -65,7 +65,7 @@ inline void init()
 
 	for (int i = 0; i < previewPieces.size(); i++)
 	{
-		previewPieces[i].setScreenPosition(nextShapeBox.getPosition() + sf::Vector2f(0, i * 10));
+		previewPieces[i].setScreenPosition(nextShapeBox.getPosition() + sf::Vector2f(0, i * 100));
 		
 	}
 }
@@ -81,9 +81,10 @@ inline void displayGameUI(sf::RenderWindow& window)
 	for (int i = 0; i < previewPieces.size(); i++)
 	{
 		previewPieces[i].update(window);
-		for (int j = 0; j < previewPieces[i].blocks.size(); j++)
+		previewPieces[i].setSize(sf::Vector2f(12, 12));
+		/*for (int j = 0; j < previewPieces[i].blocks.size(); j++)
 		{
 			std::cout << previewPieces[i].blocks[j].blockShape.getPosition().x << "|" << previewPieces[i].blocks[j].blockShape.getPosition().y << "\n";
-		}
+		}*/
 	}
 }

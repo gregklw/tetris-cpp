@@ -28,6 +28,8 @@ int main()
 
 	init();
 
+	currentPiece.setScreenPosition(gameAreaStartPosition);
+
 	while (window.isOpen())
 	{
 		while (const std::optional event = window.pollEvent())

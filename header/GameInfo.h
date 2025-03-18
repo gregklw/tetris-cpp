@@ -56,6 +56,7 @@ std::vector<TetrisPiece> tetraminoList
 			sf::Vector2f(3,0)
 		}
 		, sf::Color(3, 194, 252)
+			, blockSize
 		),
 
 		//J-shape
@@ -68,6 +69,7 @@ std::vector<TetrisPiece> tetraminoList
 			sf::Vector2f(2,1)
 		}
 		, sf::Color(0, 4, 240)
+			, blockSize
 		),
 
 		//L-shape
@@ -80,6 +82,7 @@ std::vector<TetrisPiece> tetraminoList
 			sf::Vector2f(2,1)
 		}
 		, sf::Color(252, 152, 3)
+			, blockSize
 		),
 
 		//box shape
@@ -92,6 +95,7 @@ std::vector<TetrisPiece> tetraminoList
 			sf::Vector2f(1,0)
 		}
 		, sf::Color(238, 255, 0)
+			, blockSize
 		),
 
 		//s-shape
@@ -104,6 +108,7 @@ std::vector<TetrisPiece> tetraminoList
 			sf::Vector2f(1,1)
 		}
 		, sf::Color(0, 255, 26)
+			, blockSize
 		),
 
 		//t-shape
@@ -116,6 +121,7 @@ std::vector<TetrisPiece> tetraminoList
 			sf::Vector2f(2,1)
 		}
 		, sf::Color(149, 7, 181)
+			, blockSize
 		),
 
 		//z-shape
@@ -128,6 +134,7 @@ std::vector<TetrisPiece> tetraminoList
 			sf::Vector2f(2,1)
 		}
 		, sf::Color(255, 25, 52)
+			, blockSize
 		)
 
 	}

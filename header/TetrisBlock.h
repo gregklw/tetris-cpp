@@ -15,11 +15,13 @@ public:
 	void setScreenPosition(sf::Vector2f position);
 	void moveBlockByGridPosition(sf::Vector2f position);
 	void setGridPosition(sf::Vector2f position);
+	void setBlockSize(int newBlockSize);
 	sf::Vector2f getGridPosition();
 	sf::RectangleShape blockShape;
 	~TetrisBlock();
 	
 private:
+	int currentBlockSize;
 	sf::Vector2f gridPosition;
 	sf::Vector2f blockPosition;
 };
