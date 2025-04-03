@@ -18,12 +18,16 @@ extern sf::Vector2f gameAreaDimensions;
 
 std::vector<TetrisPiece> previewPieces;
 
-void init();
+void initUI();
 void displayGameUI(sf::RenderWindow& window);
 
-inline void init()
+/// <summary>
+/// Location of the holding box relative to the screen.
+/// </summary>
+sf::Vector2f holdBoxLocation;
+
+inline void initUI()
 {
-	//heldPiece.setPiecePosition(holdBoxShape.getPosition());
 	// set the string to display
 	holdBoxText.setString("Hold");
 
@@ -36,19 +40,20 @@ inline void init()
 	// set the text style
 	holdBoxText.setStyle(sf::Text::Bold);
 	sf::FloatRect rect = holdBoxText.getGlobalBounds();
-	holdBoxText.setPosition(gameAreaStartPosition - sf::Vector2f(rect.size.x, 0));
+	holdBoxText.setPosition(gameAreaPosition - sf::Vector2f(rect.size.x, 0));
 
-	nextText.setPosition(gameAreaStartPosition + sf::Vector2f(gameAreaDimensions.x * blockSize, 0));
+	nextText.setPosition(gameAreaPosition + sf::Vector2f(gameAreaDimensions.x * blockSize, 0));
 	nextText.setString("Next");
 	nextText.setCharacterSize(24);
 
-	sf::Vector2f padding = sf::Vector2f(0,10);
+	sf::Vector2f padding = sf::Vector2f(0, 10);
 
 	holdBoxShape.setSize(sf::Vector2f(125, 125));
 	holdBoxShape.setOutlineThickness(-5);
 	holdBoxShape.setOutlineColor(sf::Color::Red);
 	holdBoxShape.setFillColor(sf::Color::Transparent);
-	holdBoxShape.setPosition(sf::Vector2f(gameAreaStartPosition.x - holdBoxShape.getSize().x, gameAreaStartPosition.y) + sf::Vector2f(0, rect.size.y) + padding);
+	holdBoxShape.setPosition(sf::Vector2f(gameAreaPosition.x - holdBoxShape.getSize().x, gameAreaPosition.y) + sf::Vector2f(0, rect.size.y) + padding);
+	holdBoxLocation = holdBoxShape.getPosition() + sf::Vector2f(holdBoxShape.getSize().x / 8, holdBoxShape.getSize().y / 4);
 
 	sf::FloatRect nextTextRect = nextText.getGlobalBounds();
 
@@ -58,15 +63,11 @@ inline void init()
 	nextShapeBox.setOutlineThickness(-5);
 	nextShapeBox.setFillColor(sf::Color::Transparent);
 
+	int previewPieceSize = 18;
+	int verticalPaddingNextPreview = 20;
 	for (int i = 0; i < 6; i++)
 	{
-		previewPieces.push_back(getNewPiece());
-	}
-
-	for (int i = 0; i < previewPieces.size(); i++)
-	{
-		previewPieces[i].setScreenPosition(nextShapeBox.getPosition() + sf::Vector2f(0, i * 100));
-		
+		previewPieces.push_back(getNewTetramino(nextShapeBox.getPosition() + sf::Vector2f(nextShapeBox.getSize().x / 3, 0) + sf::Vector2f(0, i * 75 + verticalPaddingNextPreview), previewPieceSize));
 	}
 }
 
@@ -81,10 +82,5 @@ inline void displayGameUI(sf::RenderWindow& window)
 	for (int i = 0; i < previewPieces.size(); i++)
 	{
 		previewPieces[i].update(window);
-		previewPieces[i].setSize(sf::Vector2f(12, 12));
-		/*for (int j = 0; j < previewPieces[i].blocks.size(); j++)
-		{
-			std::cout << previewPieces[i].blocks[j].blockShape.getPosition().x << "|" << previewPieces[i].blocks[j].blockShape.getPosition().y << "\n";
-		}*/
 	}
 }

@@ -8,6 +8,8 @@ GameArea::GameArea(sf::Vector2f startPosition)
 	gameAreaVisual.setFillColor(gameAreaBackgroundColor);
 	gameAreaVisual.setSize(sf::Vector2f(gameAreaDimensions.x * blockSize, gameAreaDimensions.y * blockSize));
 
+	spawnTetraminoOnGameArea();
+
 	for (int y = 0; y < gameAreaDimensions.y; y++)
 	{
 		std::vector<Cell> cellRow;
@@ -17,6 +19,14 @@ GameArea::GameArea(sf::Vector2f startPosition)
 			grid[y].push_back(Cell(x, y, startPosition));
 		}
 	}
+
+	for (int i = 0; i < currentPiece.blocks.size(); i++)
+	{
+		TetrisBlock& block = currentPiece.blocks[i];
+		currentGridPositions.push_back(block.getBlockStartGridPos());
+		previewGridPositions.push_back(block.getBlockStartGridPos());
+	}
+	printGridPositions();
 }
 
 void GameArea::update(sf::RenderWindow& window)
@@ -29,31 +39,47 @@ void GameArea::update(sf::RenderWindow& window)
 			grid[y][x].draw(window);
 		}
 	}
+	previewHardDrop(window);
+	currentPiece.update(window);
+	std::cout << previewGridPositions.size() << "\n";
 }
 
-void GameArea::previewHardDrop(sf::RenderWindow& window, TetrisPiece piece)
+void GameArea::moveGridPoints(std::vector<sf::Vector2f>& gridPoints, sf::Vector2f amount)
 {
-	TetrisPiece preview(piece);
 
-	for (int i = 0; i < preview.blocks.size(); i++)
+	for (int i = 0; i < gridPoints.size(); i++)
 	{
-		preview.blocks[i].blockShape.setFillColor(gameAreaBackgroundColor);
+		gridPoints[i] += amount;
 	}
-
-	sf::Vector2f down = sf::Vector2f(0, 1);
-	while (!checkVerticalCollision(preview))
-	{
-		preview.movePieceByGridPosition(down);
-	}
-	preview.update(window);
 }
 
-bool GameArea::checkHorizontalCollision(TetrisPiece piece, sf::Vector2f velocity)
+void GameArea::setGridPoints(std::vector<sf::Vector2f>& gridPoints, std::vector<sf::Vector2f> newGridPoints)
 {
-	for (int i = 0; i < piece.blocks.size(); i++)
+	for (int i = 0; i < gridPoints.size(); i++)
 	{
-		int gridPosX = piece.blocks[i].getGridPosition().x;
-		int gridPosY = piece.blocks[i].getGridPosition().y;
+		gridPoints[i] = newGridPoints[i];
+	}
+}
+
+void GameArea::previewHardDrop(sf::RenderWindow& window)
+{
+	previewPiece = TetrisPiece(currentPiece);
+	setGridPoints(previewGridPositions, currentGridPositions);
+
+	for (int i = 0; i < previewPiece.blocks.size(); i++)
+	{
+		previewPiece.blocks[i].blockShape.setFillColor(gameAreaBackgroundColor);
+	}
+	movePieceDownToLowestPoint(previewPiece, previewGridPositions);
+	previewPiece.update(window);
+}
+
+bool GameArea::checkHorizontalCollision(std::vector<sf::Vector2f> gridPoints, sf::Vector2f velocity)
+{
+	for (int i = 0; i < gridPoints.size(); i++)
+	{
+		int gridPosX = gridPoints[i].x;
+		int gridPosY = gridPoints[i].y;
 
 		//-------check if piece is touching left wall moving left
 		if (velocity.x < 0)
@@ -76,14 +102,12 @@ bool GameArea::checkHorizontalCollision(TetrisPiece piece, sf::Vector2f velocity
 	return false;
 }
 
-bool GameArea::checkVerticalCollision(TetrisPiece piece)
+bool GameArea::checkVerticalCollision(std::vector<sf::Vector2f> gridPoints)
 {
-	for (int i = 0; i < piece.blocks.size(); i++)
+	for (int i = 0; i < gridPoints.size(); i++)
 	{
-		int gridPosX = piece.blocks[i].getGridPosition().x;
-		int gridPosY = piece.blocks[i].getGridPosition().y;
-
-		//std::cout << gridPosY << " / " << piece.blocks[i].getBlockPosition().y << "\n";
+		int gridPosX = gridPoints[i].x;
+		int gridPosY = gridPoints[i].y;
 
 		//-------check if piece is touching bottom
 		if (gridPosY == gameAreaDimensions.y - 1)
@@ -96,8 +120,6 @@ bool GameArea::checkVerticalCollision(TetrisPiece piece)
 		{
 			if (gridPosX == grid[gridPosY][x].gridPosX && grid[gridPosY + 1][x].occupied)
 			{
-				/*occupyCells(piece);
-				return;*/
 				return true;
 			}
 		}
@@ -109,7 +131,7 @@ void GameArea::occupyCells(TetrisPiece& piece)
 {
 	for (int i = 0; i < piece.blocks.size(); i++)
 	{
-		grid[piece.blocks[i].getGridPosition().y][piece.blocks[i].getGridPosition().x].occupyCell(piece.blocks[i].blockShape.getFillColor());
+		grid[currentGridPositions[i].y][currentGridPositions[i].x].occupyCell(piece.blocks[i].blockShape.getFillColor());
 	}
 }
 
@@ -123,7 +145,7 @@ void GameArea::checkAndClearRow(int lowestRowToStart)
 	{
 		if (!grid[lowestRowToStart][j].occupied)
 		{
-			
+
 			assertCompleteRow = false;
 			break;
 		}
@@ -150,21 +172,22 @@ void GameArea::clearRow(int row)
 	}
 }
 
-void GameArea::updateGameAfterLineClear(TetrisPiece& piece)
+void GameArea::updateGameAfterVerticalCollision(TetrisPiece& piece)
 {
 	occupyCells(piece);
 	int lowestRowToStart = 0;
 
 	for (int i = 0; i < piece.blocks.size(); i++)
 	{
-		int gridPosY = piece.blocks[i].getGridPosition().y;
+		int gridPosY = currentGridPositions[i].y;
 		if (lowestRowToStart < gridPosY)
 		{
 			lowestRowToStart = gridPosY;
 		}
 	}
 	checkAndClearRow(lowestRowToStart);
-	piece = getNewPiece();
+	spawnTetraminoOnGameArea();
+	//initializePiece(piece);
 }
 
 void GameArea::moveRowsDownAfterClearing(int clearedRow)
@@ -183,6 +206,221 @@ void GameArea::moveRowsDownAfterClearing(int clearedRow)
 		}
 		clearedRow--;
 	}
+}
+
+void GameArea::hardDropCurrentPiece()
+{
+	if (hardDroppedOnPress) return;
+
+	movePieceDownToLowestPoint(currentPiece, currentGridPositions);
+	updateGameAfterVerticalCollision(currentPiece);
+	holdPieceOnPress = false;
+}
+
+void GameArea::movePieceDownToLowestPoint(TetrisPiece& piece, std::vector<sf::Vector2f>& gridPoints)
+{
+	while (!checkVerticalCollision(gridPoints))
+	{
+		movePieceDown(piece, gridPoints);
+	}
+}
+
+void GameArea::rotatePiece()
+{
+	if (rotateOnPress) return;
+
+	std::vector<TetrisBlock>& targetBlocks = currentPiece.blocks;
+
+	for (int i = 0; i < targetBlocks.size(); i++)
+	{
+		sf::Vector2f pivotPos(currentGridPositions[i].x, currentGridPositions[i].y);
+		std::vector<sf::Vector2f> newPoints;
+		bool isObstructed = false;
+
+		for (int j = 0; j < targetBlocks.size(); j++)
+		{
+			sf::Vector2f oldPos(currentGridPositions[j].x, currentGridPositions[j].y);
+
+			float newX = -(oldPos.y - pivotPos.y) + pivotPos.x;
+			float newY = oldPos.x - pivotPos.x + pivotPos.y;
+
+			std::cout << "Point number " << j << "\n";
+			std::cout << "X = " << newX << "\n";
+			std::cout << "Y = " << newY << "\n";
+
+			if (newX < 0 || newX >= gameAreaDimensions.x || newY < 0 || newY >= gameAreaDimensions.y || grid[newY][newX].occupied)
+			{
+				isObstructed = true;
+			}
+
+			std::cout << "Is obstructed: " << isObstructed << "\n";
+
+			newPoints.push_back(sf::Vector2f(newX, newY));
+
+			/*# rotates the shape clockwise
+				def rotateCW(self) :
+				newBlockX = [0, 0, 0, 0]
+				newBlockY = [0, 0, 0, 0]
+				#rotate all of the blocks
+				for i in range(self.numblocks) :
+					newBlockX[i] = -(self.blockList[i].gridYpos - self.blockList[0].gridYpos) +
+					self.blockList[0].gridXpos
+					newBlockY[i] = (self.blockList[i].gridXpos - self.blockList[0].gridXpos) +
+					self.blockList[0].gridYpos
+					self.blockList[i].gridXpos = newBlockX[i]
+					self.blockList[i].gridYpos = newBlockY[i]*/
+		}
+
+		//if not obstructed then apply the new rotation points and end this function
+		if (!isObstructed)
+		{
+			for (int j = 0; j < newPoints.size(); j++)
+			{
+				std::cout << "New point: " << newPoints[j].x << "/" << newPoints[j].y << "\n";
+				currentPiece.blocks[j].setPosition(gameAreaPosition + sf::Vector2f(newPoints[j].x * blockSize, newPoints[j].y * blockSize));
+			}
+			setGridPoints(currentGridPositions, newPoints);
+			printGridPositions();
+			break;
+		}
+		//otherwise if its obstructed and if counter isn't exceeding the block size then try the next block as a pivot point
+	}
+	printGridPositions();
+}
+
+void GameArea::checkPieceLanding()
+{
+	if (!checkVerticalCollision(currentGridPositions))
+	{
+		movePieceDown(currentPiece, currentGridPositions);
+	}
+	else
+	{
+		occupyCells(currentPiece);
+		int lowestRowToStart = 0;
+
+		for (int i = 0; i < currentPiece.blocks.size(); i++)
+		{
+			int yPos = currentPiece.blocks[i].blockShape.getPosition().y;
+			if (lowestRowToStart < yPos)
+			{
+				lowestRowToStart = yPos;
+			}
+		}
+
+		std::cout << lowestRowToStart << " Lowest Row \n";
+
+		checkAndClearRow((lowestRowToStart - gameAreaPosition.y) / blockSize);
+		spawnTetraminoOnGameArea();
+	}
+}
+
+void GameArea::movePieceLeft()
+{
+	int leftAmount = -1;
+	//std::cout << "Horizontal Collision Left: " << checkHorizontalCollision(currentPiece, sf::Vector2f(leftAmount * blockSize, 0)) << "\n";
+	if (!checkHorizontalCollision(currentGridPositions, sf::Vector2f(leftAmount * blockSize, 0)))
+	{
+		currentPiece.movePiece(sf::Vector2f(leftAmount * blockSize, 0));
+		moveGridPoints(currentGridPositions, sf::Vector2f(leftAmount, 0));
+		printGridPositions();
+	}
+}
+
+void GameArea::movePieceRight()
+{
+	int rightAmount = 1;
+	//std::cout << "Horizontal Collision Right: " << checkHorizontalCollision(currentPiece, sf::Vector2f(rightAmount * blockSize, 0)) << "\n";
+	if (!checkHorizontalCollision(currentGridPositions, sf::Vector2f(rightAmount * blockSize, 0)))
+	{
+		currentPiece.movePiece(sf::Vector2f(rightAmount * blockSize, 0));
+		moveGridPoints(currentGridPositions, sf::Vector2f(rightAmount, 0));
+		printGridPositions();
+	}
+}
+
+void GameArea::movePieceDown(TetrisPiece& piece, std::vector<sf::Vector2f>& gridPositions)
+{
+	int downAmount = 1;
+	if (!checkVerticalCollision(gridPositions))
+	{
+		piece.movePiece(sf::Vector2f(0, downAmount * blockSize));
+		moveGridPoints(gridPositions, sf::Vector2f(0, downAmount));
+	}
+	else
+	{
+		//update game area
+		updateGameAfterVerticalCollision(currentPiece);
+		holdPieceOnPress = false;
+	}
+}
+
+void GameArea::holdPiece()
+{
+	if (!holdPieceOnPress)
+	{
+		TetrisPiece pieceToBeCached = TetrisPiece(currentPiece);
+		std::cout << "----------------------------------------------------------------" << "\n";
+		//currentPiece.printPiece();
+		//if no piece was previously held
+		if (heldPiecePointer == nullptr)
+		{
+			heldPiece = pieceToBeCached;
+			heldPiecePointer = &heldPiece;
+			spawnTetraminoOnGameArea();
+		}
+		else //otherwise if we're swapping pieces
+		{
+			currentPiece = TetrisPiece(heldPiece);
+			heldPiece = pieceToBeCached;
+		}
+		//initializePiece(currentPiece);
+		currentPiece.setPosition(pieceSpawnPosition);
+		//piece.setGridPosition(pieceGridSpawnPosition);
+		setGridPoints(currentGridPositions,
+			
+			std::vector<sf::Vector2f>
+				{
+					currentPiece.blocks[0].getBlockStartGridPos(),
+					currentPiece.blocks[1].getBlockStartGridPos(),
+					currentPiece.blocks[2].getBlockStartGridPos(),
+					currentPiece.blocks[3].getBlockStartGridPos()
+				}
+			);
+
+		heldPiece.setPosition(holdBoxLocation);
+		std::cout << "****************************************************************" << "\n";
+		currentPiece.printPiece();
+		std::cout << "----------------------------------------------------------------" << "\n";
+	}
+}
+
+void GameArea::moveCurrentPieceDown()
+{
+	movePieceDown(currentPiece, currentGridPositions);
+}
+
+void GameArea::printGridPositions()
+{
+	std::cout << "****************************************************************" << "\n";
+	for (int i = 0; i < currentGridPositions.size(); i++)
+	{
+		std::cout << currentGridPositions[i].x << "/" << currentGridPositions[i].y << "\n";
+	}
+	std::cout << "****************************************************************" << "\n";
+}
+
+void GameArea::spawnTetraminoOnGameArea()
+{
+	currentPiece = getNewTetramino(gameAreaPosition, blockSize);
+	setGridPoints(currentGridPositions,
+		std::vector<sf::Vector2f>{
+			currentPiece.blocks[0].getBlockStartGridPos(),
+			currentPiece.blocks[1].getBlockStartGridPos(),
+			currentPiece.blocks[2].getBlockStartGridPos(),
+			currentPiece.blocks[3].getBlockStartGridPos()
+	}
+	);
 }
 
 GameArea::~GameArea()

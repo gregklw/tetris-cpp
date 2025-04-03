@@ -3,20 +3,16 @@
 #include "../header/GameArea.h"
 #include "../header/Cell.h"
 #include "../header/GameInfo.h"
-#include "../header/GameController.h"
 #include "../header/GameUI.h"
 
-extern std::vector<TetrisPiece> tetraminoList;
 extern int dropTimerCooldown;
 extern int sensitivityCooldown;
-extern sf::Vector2f gameAreaStartPosition;
+extern sf::Vector2f gameAreaPosition;
 extern bool holdPieceOnPress;
 extern bool hardDroppedOnPress;
 extern bool rotateOnPress;
 
-GameArea gameArea = GameArea(gameAreaStartPosition);
-TetrisPiece currentPiece = getNewPiece();
-GameController gameController = GameController();
+GameArea gameArea = GameArea(gameAreaPosition);
 
 int main()
 {
@@ -26,10 +22,7 @@ int main()
 	int dropTimer = 0;
 	int sensitivityTimer = 0;
 
-	init();
-
-	currentPiece.setScreenPosition(gameAreaStartPosition);
-
+	initUI();
 	while (window.isOpen())
 	{
 		while (const std::optional event = window.pollEvent())
@@ -42,35 +35,35 @@ int main()
 			{
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Up)
 				{
-					gameController.rotatePiece(currentPiece, gameArea);
+					gameArea.rotatePiece();
 					rotateOnPress = true;
 				}
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Space)
 				{
-					gameController.hardDropPiece(currentPiece, gameArea);
+					gameArea.hardDropCurrentPiece();
 					hardDroppedOnPress = true;
 				}
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Left)
 				{
-					gameController.movePieceLeft(currentPiece, gameArea);
+					gameArea.movePieceLeft();
 				}
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Right)
 				{
-					gameController.movePieceRight(currentPiece, gameArea);
+					gameArea.movePieceRight();
 				}
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Down)
 				{
-					gameController.movePieceDown(currentPiece, gameArea);
+					gameArea.moveCurrentPieceDown();
 				}
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::RShift)
 				{
-					
-					gameController.holdPiece(currentPiece, gameArea);
+
+					gameArea.holdPiece();
 					holdPieceOnPress = true;
 				}
 			}
@@ -99,21 +92,19 @@ int main()
 
 		if (dropTimer > dropTimerCooldown)
 		{
-			gameController.movePieceDown(currentPiece, gameArea);
+			//gameArea.movePieceDown();
 			dropTimer = 0;
 		}
 
 		if (sensitivityTimer > sensitivityCooldown)
 		{
-			
 			sensitivityTimer = 0;
 		}
 
 		window.clear();
 
 		gameArea.update(window);
-		gameArea.previewHardDrop(window, currentPiece);
-		currentPiece.update(window);
+		//gameArea.previewHardDrop(window);
 		displayGameUI(window);
 
 		window.display();

@@ -4,38 +4,65 @@ TetrisPiece::TetrisPiece()
 {
 }
 
-TetrisPiece::TetrisPiece(std::array<sf::Vector2f, 4> blockIndices, sf::Color color, int blockSize)
+TetrisPiece::TetrisPiece(std::array<sf::Vector2f, 4> blockPivots, sf::Vector2f screenStartPosition, sf::Color color, int blockSize)
 {
 	std::vector<TetrisBlock> blocks;
 
-	for (int i = 0; i < blockIndices.size(); i++)
+	for (int i = 0; i < blockPivots.size(); i++)
 	{
-		blocks.push_back(TetrisBlock(blockIndices[i], color));
+		blocks.push_back(TetrisBlock(blockPivots[i], screenStartPosition, color, blockSize));
 	}
-	for (int i = 0; i < blocks.size(); i++)
+
+	/*for (int i = 0; i < blocks.size(); i++)
 	{
-		blocks[i].setBlockSize(blockSize);
-	}
+		sf::Vector2f blockPivot = blockPivots[i];
+		blocks[i].blockShape.setPosition(screenStartPosition + sf::Vector2f(blockPivot.x * blockSize, blockPivot.y * blockSize));
+	}*/
 
 	this->blocks = blocks;
 }
 
-void TetrisPiece::setScreenPosition(sf::Vector2f position)
+void TetrisPiece::setPosition(sf::Vector2f position)
 {
-	sf::Vector2f amountToMove = position - blocks[0].getGridPosition();
 	for (int i = 0; i < blocks.size(); i++)
 	{
-		std::cout << amountToMove.x << "/" << amountToMove.y << "\n";
-		blocks[i].moveBlockByScreenPosition(amountToMove);
+		TetrisBlock& block = blocks[i];
+		block.setPosition(position + sf::Vector2f(block.getBlockStartGridPos().x * blockSize, block.getBlockStartGridPos().y * blockSize));
 	}
 }
 
-void TetrisPiece::setGridPosition(sf::Vector2f position)
+//void TetrisPiece::setGridPosition(sf::Vector2f targetPosition)
+//{
+//	int highestGridPosY = 0;
+//
+//	for (int i = 0; i < blocks.size(); i++)
+//	{
+//		if (highestGridPosY < blocks[i].getGridPosition().y)
+//		{
+//			highestGridPosY = blocks[i].getGridPosition().y;
+//		}
+//	}
+//
+//	sf::Vector2f position = (sf::Vector2f(0, highestGridPosY) + targetPosition) - blocks[0].getGridPosition();
+//	for (int i = 0; i < blocks.size(); i++)
+//	{
+//		blocks[i].setGridPosition(position + blocks[i].getBlockStartGridPos());
+//	}
+//}
+//
+//void TetrisPiece::movePieceByGrid(sf::Vector2f gridPosition)
+//{
+//	for (int i = 0; i < blocks.size(); i++)
+//	{
+//		blocks[i].moveBlockByGrid(gridPosition);
+//	}
+//}
+
+void TetrisPiece::movePiece(sf::Vector2f amount)
 {
-	sf::Vector2f amountToMove = position - blocks[0].getGridPosition();
 	for (int i = 0; i < blocks.size(); i++)
 	{
-		blocks[i].moveBlockByGridPosition(amountToMove);
+		blocks[i].moveBlock(amount);
 	}
 }
 
@@ -47,19 +74,19 @@ void TetrisPiece::setSize(sf::Vector2f size)
 	}
 }
 
-void TetrisPiece::movePieceByGridPosition(sf::Vector2f amountToMove)
-{
-	for (int i = 0; i < blocks.size(); i++)
-	{
-		blocks[i].moveBlockByGridPosition(amountToMove);
-	}
-}
-
 void TetrisPiece::update(sf::RenderWindow& window)
 {
 	for (int i = 0; i < blocks.size(); i++)
 	{
 		blocks[i].update(window);
+	}
+}
+
+void TetrisPiece::printPiece()
+{
+	for (int i = 0; i < blocks.size(); i++)
+	{
+		blocks[i].printBlock();
 	}
 }
 

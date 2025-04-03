@@ -5,13 +5,15 @@ class TetrisPiece
 {
 public:
 	TetrisPiece();
-	TetrisPiece(std::array<sf::Vector2f, 4> blockIndices, sf::Color color, int blockSize);
+	TetrisPiece(std::array<sf::Vector2f, 4> blockPivots, sf::Vector2f screenStartPosition, sf::Color color, int blockSize);
 	std::vector<TetrisBlock> blocks;
-	void setScreenPosition(sf::Vector2f position);
-	void setGridPosition(sf::Vector2f amountToMoveInGrid);
+	void setPosition(sf::Vector2f position);
+	//void setGridPosition(sf::Vector2f targetPosition);
+	//void movePieceByGrid(sf::Vector2f gridPosition);
+	void movePiece(sf::Vector2f amount);
 	void setSize(sf::Vector2f size);
-	void movePieceByGridPosition(sf::Vector2f amountToMoveInGrid);
 	void update(sf::RenderWindow& window);
+	void printPiece();
 	~TetrisPiece();
 
 private:
