@@ -13,18 +13,25 @@ sf::RectangleShape holdBoxShape;
 sf::Text nextText(font);
 sf::RectangleShape nextShapeBox;
 
-//extern TetrisPiece heldPiece;
-extern sf::Vector2f gameAreaDimensions;
-
-std::vector<TetrisPiece> previewPieces;
+int previewPieceSize = 18;
 
 void initUI();
 void displayGameUI(sf::RenderWindow& window);
+
+//extern TetrisPiece heldPiece;
+extern sf::Vector2f gameAreaDimensions;
+extern GameArea gameArea;
+
+//std::vector<TetrisPiece> previewPieces;
+
 
 /// <summary>
 /// Location of the holding box relative to the screen.
 /// </summary>
 sf::Vector2f holdBoxLocation;
+
+
+
 
 inline void initUI()
 {
@@ -63,12 +70,13 @@ inline void initUI()
 	nextShapeBox.setOutlineThickness(-5);
 	nextShapeBox.setFillColor(sf::Color::Transparent);
 
-	int previewPieceSize = 18;
-	int verticalPaddingNextPreview = 20;
-	for (int i = 0; i < 6; i++)
-	{
-		previewPieces.push_back(getNewTetramino(nextShapeBox.getPosition() + sf::Vector2f(nextShapeBox.getSize().x / 3, 0) + sf::Vector2f(0, i * 75 + verticalPaddingNextPreview), previewPieceSize));
-	}
+	//for (int i = 0; i < gameArea.nextPieces.size(); i++)
+	//{
+	//	//previewPieces.push_back(getNewTetramino(nextShapeBox.getPosition() + sf::Vector2f(nextShapeBox.getSize().x / 3, 0) + sf::Vector2f(0, i * 75 + verticalPaddingNextPreview), previewPieceSize));
+	//	gameArea.nextPieces[i].setPosition(nextShapeBox.getPosition() + sf::Vector2f(nextShapeBox.getSize().x / 3, 0) + sf::Vector2f(0, i * 75 + verticalPaddingNextPreview));
+	//	gameArea.nextPieces[i].setSize(sf::Vector2f(previewPieceSize, previewPieceSize));
+	//}
+
 }
 
 inline void displayGameUI(sf::RenderWindow& window)
@@ -79,8 +87,12 @@ inline void displayGameUI(sf::RenderWindow& window)
 	window.draw(nextText);
 	window.draw(nextShapeBox);
 	if (heldPiecePointer != nullptr) heldPiece.update(window);
-	for (int i = 0; i < previewPieces.size(); i++)
+	
+	int verticalPaddingNextPreview = 20;
+	for (int i = 0; i < gameArea.nextPieces.size(); i++)
 	{
-		previewPieces[i].update(window);
+		gameArea.nextPieces[i].setPosition(nextShapeBox.getPosition() + sf::Vector2f(nextShapeBox.getSize().x / 3, 0) + sf::Vector2f(0, i * 75 + verticalPaddingNextPreview));
+		gameArea.nextPieces[i].setSize(sf::Vector2f(previewPieceSize, previewPieceSize));
+		gameArea.nextPieces[i].update(window);
 	}
 }

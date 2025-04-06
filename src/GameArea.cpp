@@ -24,8 +24,15 @@ GameArea::GameArea(sf::Vector2f startPosition)
 	{
 		TetrisBlock& block = currentPiece.blocks[i];
 		currentGridPositions.push_back(block.getBlockStartGridPos());
-		previewGridPositions.push_back(block.getBlockStartGridPos());
+		ghostGridPositions.push_back(block.getBlockStartGridPos());
 	}
+
+	for (int i = 0; i < 6; i++)
+	{
+		nextPieces.push_back(getNewTetramino(sf::Vector2f(0,0), blockSize));
+		std::cout << "Created pieces" << "\n";
+	}
+
 	printGridPositions();
 }
 
@@ -41,7 +48,7 @@ void GameArea::update(sf::RenderWindow& window)
 	}
 	previewHardDrop(window);
 	currentPiece.update(window);
-	std::cout << previewGridPositions.size() << "\n";
+	std::cout << ghostGridPositions.size() << "\n";
 }
 
 void GameArea::moveGridPoints(std::vector<sf::Vector2f>& gridPoints, sf::Vector2f amount)
@@ -63,15 +70,15 @@ void GameArea::setGridPoints(std::vector<sf::Vector2f>& gridPoints, std::vector<
 
 void GameArea::previewHardDrop(sf::RenderWindow& window)
 {
-	previewPiece = TetrisPiece(currentPiece);
-	setGridPoints(previewGridPositions, currentGridPositions);
+	ghostPiece = TetrisPiece(currentPiece);
+	setGridPoints(ghostGridPositions, currentGridPositions);
 
-	for (int i = 0; i < previewPiece.blocks.size(); i++)
+	for (int i = 0; i < ghostPiece.blocks.size(); i++)
 	{
-		previewPiece.blocks[i].blockShape.setFillColor(gameAreaBackgroundColor);
+		ghostPiece.blocks[i].blockShape.setFillColor(gameAreaBackgroundColor);
 	}
-	movePieceDownToLowestPoint(previewPiece, previewGridPositions);
-	previewPiece.update(window);
+	movePieceDownToLowestPoint(ghostPiece, ghostGridPositions);
+	ghostPiece.update(window);
 }
 
 bool GameArea::checkHorizontalCollision(std::vector<sf::Vector2f> gridPoints, sf::Vector2f velocity)
@@ -127,7 +134,7 @@ bool GameArea::checkVerticalCollision(std::vector<sf::Vector2f> gridPoints)
 	return false;
 }
 
-void GameArea::occupyCells(TetrisPiece& piece)
+void GameArea::occupyCells(TetrisPiece piece)
 {
 	for (int i = 0; i < piece.blocks.size(); i++)
 	{
@@ -172,7 +179,7 @@ void GameArea::clearRow(int row)
 	}
 }
 
-void GameArea::updateGameAfterVerticalCollision(TetrisPiece& piece)
+void GameArea::updateGameAfterVerticalCollision(TetrisPiece piece)
 {
 	occupyCells(piece);
 	int lowestRowToStart = 0;
@@ -186,7 +193,7 @@ void GameArea::updateGameAfterVerticalCollision(TetrisPiece& piece)
 		}
 	}
 	checkAndClearRow(lowestRowToStart);
-	spawnTetraminoOnGameArea();
+	spawnTetraminoOnGameArea(grabTopPreviewPiece());
 	//initializePiece(piece);
 }
 
@@ -413,6 +420,9 @@ void GameArea::printGridPositions()
 void GameArea::spawnTetraminoOnGameArea()
 {
 	currentPiece = getNewTetramino(gameAreaPosition, blockSize);
+	//currentPiece = grabTopPreviewPiece();
+	currentPiece.setSize(sf::Vector2f(blockSize, blockSize));
+	
 	setGridPoints(currentGridPositions,
 		std::vector<sf::Vector2f>{
 			currentPiece.blocks[0].getBlockStartGridPos(),
@@ -421,6 +431,31 @@ void GameArea::spawnTetraminoOnGameArea()
 			currentPiece.blocks[3].getBlockStartGridPos()
 	}
 	);
+}
+
+void GameArea::spawnTetraminoOnGameArea(TetrisPiece piece)
+{
+	currentPiece = piece;
+	//currentPiece = grabTopPreviewPiece();
+	currentPiece.setSize(sf::Vector2f(blockSize, blockSize));
+
+	setGridPoints(currentGridPositions,
+		std::vector<sf::Vector2f>{
+		currentPiece.blocks[0].getBlockStartGridPos(),
+			currentPiece.blocks[1].getBlockStartGridPos(),
+			currentPiece.blocks[2].getBlockStartGridPos(),
+			currentPiece.blocks[3].getBlockStartGridPos()
+	}
+	);
+}
+
+TetrisPiece GameArea::grabTopPreviewPiece()
+{
+	TetrisPiece topPiece = TetrisPiece(nextPieces.front());
+	topPiece.setPosition(gameAreaPosition);
+	nextPieces.erase(nextPieces.begin());
+	nextPieces.push_back(getNewTetramino(sf::Vector2f(0,0), previewPieceSize));
+	return topPiece;
 }
 
 GameArea::~GameArea()

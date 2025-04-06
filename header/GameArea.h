@@ -2,9 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include "../header/Cell.h"
 #include "../header/TetrisPiece.h"
-#include <unordered_set>
+#include <queue>
 
 extern int blockSize;
+extern int previewPieceSize;
 extern sf::Color emptyBorderColor;
 extern sf::Color gameAreaBackgroundColor;
 extern sf::Vector2f gameAreaDimensions;
@@ -31,10 +32,10 @@ public:
 	void previewHardDrop(sf::RenderWindow& window);
 	bool checkHorizontalCollision(std::vector<sf::Vector2f> gridPoints, sf::Vector2f velocity);
 	bool checkVerticalCollision(std::vector<sf::Vector2f> gridPoints);
-	void occupyCells(TetrisPiece& piece);
+	void occupyCells(TetrisPiece piece);
 	void checkAndClearRow(int lowestRowToStart);
 	void clearRow(int row);
-	void updateGameAfterVerticalCollision(TetrisPiece& piece);
+	void updateGameAfterVerticalCollision(TetrisPiece piece);
 	void moveRowsDownAfterClearing(int clearedRow);
 
 	void hardDropCurrentPiece();
@@ -49,8 +50,11 @@ public:
 	void printGridPositions();
 
 	void spawnTetraminoOnGameArea();
+	void spawnTetraminoOnGameArea(TetrisPiece piece);
+	TetrisPiece grabTopPreviewPiece();
 
 	std::vector<std::vector<Cell>> grid;
+	std::vector<TetrisPiece> nextPieces;
 	~GameArea();
 
 private:
@@ -61,6 +65,7 @@ private:
 	sf::RectangleShape gameAreaVisual;
 	TetrisPiece currentPiece;
 	std::vector<sf::Vector2f> currentGridPositions;
-	TetrisPiece previewPiece;
-	std::vector<sf::Vector2f> previewGridPositions;
+	TetrisPiece ghostPiece;
+	std::vector<sf::Vector2f> ghostGridPositions;
+
 };
