@@ -3,12 +3,12 @@
 GameArea::GameArea(sf::Vector2f startPosition)
 {
 	gameAreaVisual.setPosition(startPosition);
-	gameAreaVisual.setOutlineThickness(-blockSize / 10.0f);
+	gameAreaVisual.setOutlineThickness(-gameAreaBlockSize / 10.0f);
 	gameAreaVisual.setOutlineColor(emptyBorderColor);
 	gameAreaVisual.setFillColor(gameAreaBackgroundColor);
-	gameAreaVisual.setSize(sf::Vector2f(gameAreaDimensions.x * blockSize, gameAreaDimensions.y * blockSize));
+	gameAreaVisual.setSize(sf::Vector2f(gameAreaDimensions.x * gameAreaBlockSize, gameAreaDimensions.y * gameAreaBlockSize));
 
-	spawnTetraminoOnGameArea();
+	spawnTetraminoOnGameArea(getNewTetramino(gameAreaPosition, gameAreaBlockSize));
 
 	for (int y = 0; y < gameAreaDimensions.y; y++)
 	{
@@ -29,7 +29,7 @@ GameArea::GameArea(sf::Vector2f startPosition)
 
 	for (int i = 0; i < 6; i++)
 	{
-		nextPieces.push_back(getNewTetramino(sf::Vector2f(0,0), blockSize));
+		nextPieces.push_back(getNewTetramino(sf::Vector2f(0,0), previewPieceSize));
 		std::cout << "Created pieces" << "\n";
 	}
 
@@ -237,6 +237,7 @@ void GameArea::rotatePiece()
 	if (rotateOnPress) return;
 
 	std::vector<TetrisBlock>& targetBlocks = currentPiece.blocks;
+	sf::Vector2f currentBlockSize = currentPiece.blocks[0].blockShape.getSize();
 
 	for (int i = 0; i < targetBlocks.size(); i++)
 	{
@@ -284,7 +285,7 @@ void GameArea::rotatePiece()
 			for (int j = 0; j < newPoints.size(); j++)
 			{
 				std::cout << "New point: " << newPoints[j].x << "/" << newPoints[j].y << "\n";
-				currentPiece.blocks[j].setPosition(gameAreaPosition + sf::Vector2f(newPoints[j].x * blockSize, newPoints[j].y * blockSize));
+				currentPiece.blocks[j].setPosition(gameAreaPosition + sf::Vector2f(newPoints[j].x * currentBlockSize.x, newPoints[j].y * currentBlockSize.y));
 			}
 			setGridPoints(currentGridPositions, newPoints);
 			printGridPositions();
@@ -317,8 +318,8 @@ void GameArea::checkPieceLanding()
 
 		std::cout << lowestRowToStart << " Lowest Row \n";
 
-		checkAndClearRow((lowestRowToStart - gameAreaPosition.y) / blockSize);
-		spawnTetraminoOnGameArea();
+		checkAndClearRow((lowestRowToStart - gameAreaPosition.y) / gameAreaBlockSize);
+		spawnTetraminoOnGameArea(grabTopPreviewPiece());
 	}
 }
 
@@ -326,9 +327,9 @@ void GameArea::movePieceLeft()
 {
 	int leftAmount = -1;
 	//std::cout << "Horizontal Collision Left: " << checkHorizontalCollision(currentPiece, sf::Vector2f(leftAmount * blockSize, 0)) << "\n";
-	if (!checkHorizontalCollision(currentGridPositions, sf::Vector2f(leftAmount * blockSize, 0)))
+	if (!checkHorizontalCollision(currentGridPositions, sf::Vector2f(leftAmount * gameAreaBlockSize, 0)))
 	{
-		currentPiece.movePiece(sf::Vector2f(leftAmount * blockSize, 0));
+		currentPiece.movePiece(sf::Vector2f(leftAmount * gameAreaBlockSize, 0));
 		moveGridPoints(currentGridPositions, sf::Vector2f(leftAmount, 0));
 		printGridPositions();
 	}
@@ -338,9 +339,9 @@ void GameArea::movePieceRight()
 {
 	int rightAmount = 1;
 	//std::cout << "Horizontal Collision Right: " << checkHorizontalCollision(currentPiece, sf::Vector2f(rightAmount * blockSize, 0)) << "\n";
-	if (!checkHorizontalCollision(currentGridPositions, sf::Vector2f(rightAmount * blockSize, 0)))
+	if (!checkHorizontalCollision(currentGridPositions, sf::Vector2f(rightAmount * gameAreaBlockSize, 0)))
 	{
-		currentPiece.movePiece(sf::Vector2f(rightAmount * blockSize, 0));
+		currentPiece.movePiece(sf::Vector2f(rightAmount * gameAreaBlockSize, 0));
 		moveGridPoints(currentGridPositions, sf::Vector2f(rightAmount, 0));
 		printGridPositions();
 	}
@@ -351,7 +352,7 @@ void GameArea::movePieceDown(TetrisPiece& piece, std::vector<sf::Vector2f>& grid
 	int downAmount = 1;
 	if (!checkVerticalCollision(gridPositions))
 	{
-		piece.movePiece(sf::Vector2f(0, downAmount * blockSize));
+		piece.movePiece(sf::Vector2f(0, downAmount * gameAreaBlockSize));
 		moveGridPoints(gridPositions, sf::Vector2f(0, downAmount));
 	}
 	else
@@ -374,7 +375,7 @@ void GameArea::holdPiece()
 		{
 			heldPiece = pieceToBeCached;
 			heldPiecePointer = &heldPiece;
-			spawnTetraminoOnGameArea();
+			spawnTetraminoOnGameArea(grabTopPreviewPiece());
 		}
 		else //otherwise if we're swapping pieces
 		{
@@ -417,27 +418,11 @@ void GameArea::printGridPositions()
 	std::cout << "****************************************************************" << "\n";
 }
 
-void GameArea::spawnTetraminoOnGameArea()
-{
-	currentPiece = getNewTetramino(gameAreaPosition, blockSize);
-	//currentPiece = grabTopPreviewPiece();
-	currentPiece.setSize(sf::Vector2f(blockSize, blockSize));
-	
-	setGridPoints(currentGridPositions,
-		std::vector<sf::Vector2f>{
-			currentPiece.blocks[0].getBlockStartGridPos(),
-			currentPiece.blocks[1].getBlockStartGridPos(),
-			currentPiece.blocks[2].getBlockStartGridPos(),
-			currentPiece.blocks[3].getBlockStartGridPos()
-	}
-	);
-}
-
 void GameArea::spawnTetraminoOnGameArea(TetrisPiece piece)
 {
 	currentPiece = piece;
 	//currentPiece = grabTopPreviewPiece();
-	currentPiece.setSize(sf::Vector2f(blockSize, blockSize));
+	//currentPiece.setSize(sf::Vector2f(gameAreaBlockSize, gameAreaBlockSize));
 
 	setGridPoints(currentGridPositions,
 		std::vector<sf::Vector2f>{
@@ -452,6 +437,7 @@ void GameArea::spawnTetraminoOnGameArea(TetrisPiece piece)
 TetrisPiece GameArea::grabTopPreviewPiece()
 {
 	TetrisPiece topPiece = TetrisPiece(nextPieces.front());
+	topPiece.setSize(sf::Vector2f(gameAreaBlockSize, gameAreaBlockSize));
 	topPiece.setPosition(gameAreaPosition);
 	nextPieces.erase(nextPieces.begin());
 	nextPieces.push_back(getNewTetramino(sf::Vector2f(0,0), previewPieceSize));

@@ -4,7 +4,7 @@
 #include "../header/TetrisPiece.h"
 #include <queue>
 
-extern int blockSize;
+extern int gameAreaBlockSize;
 extern int previewPieceSize;
 extern sf::Color emptyBorderColor;
 extern sf::Color gameAreaBackgroundColor;
@@ -49,7 +49,6 @@ public:
 
 	void printGridPositions();
 
-	void spawnTetraminoOnGameArea();
 	void spawnTetraminoOnGameArea(TetrisPiece piece);
 	TetrisPiece grabTopPreviewPiece();
 

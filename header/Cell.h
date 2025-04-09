@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-extern int blockSize;
+extern int gameAreaBlockSize;
 extern sf::Color emptyBorderColor;
 extern sf::Color occupiedBorderColor;
 extern sf::Color gameAreaBackgroundColor;

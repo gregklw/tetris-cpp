@@ -27,7 +27,8 @@ void TetrisPiece::setPosition(sf::Vector2f position)
 	for (int i = 0; i < blocks.size(); i++)
 	{
 		TetrisBlock& block = blocks[i];
-		block.setPosition(position + sf::Vector2f(block.getBlockStartGridPos().x * blockSize, block.getBlockStartGridPos().y * blockSize));
+		sf::RectangleShape blockShape = block.blockShape;
+		block.setPosition(position + sf::Vector2f(block.getBlockStartGridPos().x * blockShape.getSize().x, block.getBlockStartGridPos().y * blockShape.getSize().y));
 	}
 }
 

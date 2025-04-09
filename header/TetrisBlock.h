@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-extern int blockSize;
+extern int gameAreaBlockSize;
 extern sf::Vector2f gameAreaPosition;
 extern sf::Color blockBorderColor;
 

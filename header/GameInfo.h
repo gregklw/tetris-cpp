@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "TetrisPiece.h"
 
-int blockSize = 25;
+int gameAreaBlockSize = 25;
 int dropTimerCooldown = 10;
 int sensitivityCooldown = 1;
 sf::Vector2f gameAreaPosition(125, 100);

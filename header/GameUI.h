@@ -46,12 +46,10 @@ inline void initUI()
 
 	// set the text style
 	holdBoxText.setStyle(sf::Text::Bold);
-	sf::FloatRect rect = holdBoxText.getGlobalBounds();
-	holdBoxText.setPosition(gameAreaPosition - sf::Vector2f(rect.size.x, 0));
+	sf::FloatRect holdBoxTextRect = holdBoxText.getGlobalBounds();
+	holdBoxText.setPosition(gameAreaPosition - sf::Vector2f(holdBoxTextRect.size.x * 1.75, 0));
 
-	nextText.setPosition(gameAreaPosition + sf::Vector2f(gameAreaDimensions.x * blockSize, 0));
-	nextText.setString("Next");
-	nextText.setCharacterSize(24);
+	
 
 	sf::Vector2f padding = sf::Vector2f(0, 10);
 
@@ -59,16 +57,23 @@ inline void initUI()
 	holdBoxShape.setOutlineThickness(-5);
 	holdBoxShape.setOutlineColor(sf::Color::Red);
 	holdBoxShape.setFillColor(sf::Color::Transparent);
-	holdBoxShape.setPosition(sf::Vector2f(gameAreaPosition.x - holdBoxShape.getSize().x, gameAreaPosition.y) + sf::Vector2f(0, rect.size.y) + padding);
+	holdBoxShape.setPosition(sf::Vector2f(gameAreaPosition.x - holdBoxShape.getSize().x, gameAreaPosition.y) + sf::Vector2f(0, holdBoxTextRect.size.y) + padding);
 	holdBoxLocation = holdBoxShape.getPosition() + sf::Vector2f(holdBoxShape.getSize().x / 8, holdBoxShape.getSize().y / 4);
 
-	sf::FloatRect nextTextRect = nextText.getGlobalBounds();
 
 	nextShapeBox.setSize(sf::Vector2f(125, 450));
-	nextShapeBox.setPosition(sf::Vector2f(nextText.getPosition().x, nextText.getPosition().y + nextTextRect.size.y) + padding);
 	nextShapeBox.setOutlineColor(sf::Color::White);
 	nextShapeBox.setOutlineThickness(-5);
 	nextShapeBox.setFillColor(sf::Color::Transparent);
+
+	sf::Vector2f gameAreaRightAnchor = gameAreaPosition + sf::Vector2f(gameAreaDimensions.x * gameAreaBlockSize, 0);
+
+	nextText.setPosition(gameAreaRightAnchor + sf::Vector2f(125/3, 0));
+	nextText.setString("Next");
+	nextText.setCharacterSize(24);
+
+	sf::FloatRect nextTextRect = nextText.getGlobalBounds();
+	nextShapeBox.setPosition(gameAreaRightAnchor + sf::Vector2f(0, nextTextRect.size.y) + padding);
 
 	//for (int i = 0; i < gameArea.nextPieces.size(); i++)
 	//{
