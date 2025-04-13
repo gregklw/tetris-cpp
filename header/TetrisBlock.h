@@ -2,9 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-extern int gameAreaBlockSize;
-extern sf::Vector2f gameAreaPosition;
-extern sf::Color blockBorderColor;
+extern const int gameAreaBlockSize;
+extern const sf::Vector2f gameAreaPosition;
+extern const sf::Color blockBorderColor;
 
 class TetrisBlock
 {

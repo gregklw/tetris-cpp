@@ -2,17 +2,18 @@
 #include <SFML/Graphics.hpp>
 #include "../header/Cell.h"
 #include "../header/TetrisPiece.h"
-#include <queue>
 
-extern int gameAreaBlockSize;
-extern int previewPieceSize;
-extern sf::Color emptyBorderColor;
-extern sf::Color gameAreaBackgroundColor;
-extern sf::Vector2f gameAreaDimensions;
-extern sf::Vector2f gameAreaPosition;
-extern sf::Vector2f pieceSpawnPosition;
-extern sf::Vector2f pieceGridSpawnPosition;
-extern std::vector<TetrisPiece> tetraminoList;
+extern const int autoMoveDownCooldown;
+extern const int gameAreaBlockSize;
+extern const int previewPieceSize;
+extern const sf::Color emptyBorderColor;
+extern const sf::Color gameAreaBackgroundColor;
+extern const sf::Color ghostFillColor;
+extern const sf::Vector2f gameAreaDimensions;
+extern const sf::Vector2f gameAreaPosition;
+extern const sf::Vector2f pieceSpawnPosition;
+extern const sf::Vector2f pieceGridSpawnPosition;
+extern const std::vector<TetrisPiece> tetraminoList;
 
 extern bool holdPieceOnPress;
 extern bool hardDroppedOnPress;
@@ -41,7 +42,6 @@ public:
 	void hardDropCurrentPiece();
 	void movePieceDownToLowestPoint(TetrisPiece& piece, std::vector<sf::Vector2f>& gridPoints);
 	void rotatePiece();
-	void checkPieceLanding();
 	void movePieceLeft();
 	void movePieceRight();
 	void holdPiece();
@@ -60,11 +60,14 @@ private:
 	void movePieceDown(TetrisPiece& piece, std::vector<sf::Vector2f>& gridPositions);
 	void setGridPoints(std::vector<sf::Vector2f>& gridPoints, std::vector<sf::Vector2f> newGridPoints);
 	void moveGridPoints(std::vector<sf::Vector2f>& gridPoints, sf::Vector2f amount);
+	void autoMoveCurrentPieceDown();
+	void checkLossConditions();
+	void resetGame();
 
 	sf::RectangleShape gameAreaVisual;
 	TetrisPiece currentPiece;
 	std::vector<sf::Vector2f> currentGridPositions;
 	TetrisPiece ghostPiece;
 	std::vector<sf::Vector2f> ghostGridPositions;
-
+	int autoMoveDownTimer;
 };

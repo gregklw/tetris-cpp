@@ -1,10 +1,10 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-extern int gameAreaBlockSize;
-extern sf::Color emptyBorderColor;
-extern sf::Color occupiedBorderColor;
-extern sf::Color gameAreaBackgroundColor;
+extern const int gameAreaBlockSize;
+extern const sf::Color emptyBorderColor;
+extern const sf::Color occupiedBorderColor;
+extern const sf::Color gameAreaBackgroundColor;
 
 class Cell
 {

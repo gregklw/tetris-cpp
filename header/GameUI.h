@@ -13,13 +13,13 @@ sf::RectangleShape holdBoxShape;
 sf::Text nextText(font);
 sf::RectangleShape nextShapeBox;
 
-int previewPieceSize = 18;
+const int previewPieceSize = 18;
 
 void initUI();
 void displayGameUI(sf::RenderWindow& window);
 
 //extern TetrisPiece heldPiece;
-extern sf::Vector2f gameAreaDimensions;
+extern const sf::Vector2f gameAreaDimensions;
 extern GameArea gameArea;
 
 //std::vector<TetrisPiece> previewPieces;

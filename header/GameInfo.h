@@ -2,17 +2,18 @@
 #include <SFML/Graphics.hpp>
 #include "TetrisPiece.h"
 
-int gameAreaBlockSize = 25;
-int dropTimerCooldown = 10;
-int sensitivityCooldown = 1;
-sf::Vector2f gameAreaPosition(125, 100);
-sf::Vector2f pieceGridSpawnPosition(4, 0);
-sf::Vector2f pieceSpawnPosition(gameAreaPosition);
-sf::Vector2f gameAreaDimensions = sf::Vector2f(10, 20);
-sf::Color occupiedBorderColor = sf::Color::Black;
-sf::Color gameAreaBackgroundColor = sf::Color(26, 5, 110);
-sf::Color emptyBorderColor = gameAreaBackgroundColor;
-sf::Color blockBorderColor = sf::Color(125, 125, 125);
+const int gameAreaBlockSize = 25;
+const int autoMoveDownCooldown = 15;
+const int sensitivityCooldown = 1;
+const sf::Vector2f gameAreaPosition(125, 100);
+const sf::Vector2f pieceGridSpawnPosition(4, 0);
+const sf::Vector2f pieceSpawnPosition(gameAreaPosition);
+const sf::Vector2f gameAreaDimensions = sf::Vector2f(10, 20);
+const sf::Color occupiedBorderColor = sf::Color::Black;
+const sf::Color gameAreaBackgroundColor = sf::Color(26, 5, 110);
+const sf::Color ghostFillColor = sf::Color::Transparent;
+const sf::Color emptyBorderColor = gameAreaBackgroundColor;
+const sf::Color blockBorderColor = sf::Color(125, 125, 125);
 
 /// <summary>
 /// Piece that is used for display when being held.

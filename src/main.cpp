@@ -5,9 +5,9 @@
 #include "../header/GameInfo.h"
 #include "../header/GameUI.h"
 
-extern int dropTimerCooldown;
-extern int sensitivityCooldown;
-extern sf::Vector2f gameAreaPosition;
+extern const int dropTimerCooldown;
+extern const int sensitivityCooldown;
+extern const sf::Vector2f gameAreaPosition;
 extern bool holdPieceOnPress;
 extern bool hardDroppedOnPress;
 extern bool rotateOnPress;
@@ -19,7 +19,6 @@ int main()
 	auto window = sf::RenderWindow(sf::VideoMode({ 1280u, 720u }), "CMake SFML Project");
 	window.setFramerateLimit(144);
 
-	int dropTimer = 0;
 	int sensitivityTimer = 0;
 
 	initUI();
@@ -87,14 +86,8 @@ int main()
 
 		//check if piece collides into anything
 
-		dropTimer++;
 		sensitivityTimer++;
 
-		if (dropTimer > dropTimerCooldown)
-		{
-			//gameArea.movePieceDown();
-			dropTimer = 0;
-		}
 
 		if (sensitivityTimer > sensitivityCooldown)
 		{
@@ -102,9 +95,8 @@ int main()
 		}
 
 		window.clear();
-
 		gameArea.update(window);
-		//gameArea.previewHardDrop(window);
+		gameArea.previewHardDrop(window);
 		displayGameUI(window);
 
 		window.display();
