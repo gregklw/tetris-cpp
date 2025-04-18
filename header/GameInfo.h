@@ -1,7 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "TetrisPiece.h"
+#include "TetrisEvents.h"
 
+const int previewPieceSize = 15;
 const int gameAreaBlockSize = 25;
 const int autoMoveDownCooldown = 15;
 const int sensitivityCooldown = 1;
@@ -15,11 +17,23 @@ const sf::Color ghostFillColor = sf::Color::Transparent;
 const sf::Color emptyBorderColor = gameAreaBackgroundColor;
 const sf::Color blockBorderColor = sf::Color(125, 125, 125);
 
+std::vector<TetrisPiece> nextPieces;
+
+/// <summary>
+/// Location of the holding box relative to the screen.
+/// </summary>
+sf::Vector2f holdBoxLocation;
+
 /// <summary>
 /// Piece that is used for display when being held.
 /// </summary>
 TetrisPiece heldPiece;
 TetrisPiece* heldPiecePointer = nullptr;
+
+/// <summary>
+/// The current score of the player.
+/// </summary>
+int currentScore = 0;
 
 /// <summary>
 /// Boolean to mark whether a hard drop action has been performed.
@@ -152,3 +166,6 @@ TetrisPiece getNewTetramino(sf::Vector2f screenStartPosition, int size)
 	//newPiece.setGridPosition(pieceGridSpawnPosition);
 	return newPiece;
 }
+
+//tetris events
+TetrisEvents tetrisEvents = TetrisEvents();

@@ -2,7 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include "../header/Cell.h"
 #include "../header/TetrisPiece.h"
+#include "../header/TetrisEvents.h"
 
+extern int currentScore;
 extern const int autoMoveDownCooldown;
 extern const int gameAreaBlockSize;
 extern const int previewPieceSize;
@@ -14,6 +16,8 @@ extern const sf::Vector2f gameAreaPosition;
 extern const sf::Vector2f pieceSpawnPosition;
 extern const sf::Vector2f pieceGridSpawnPosition;
 extern const std::vector<TetrisPiece> tetraminoList;
+extern std::vector<TetrisPiece> nextPieces;
+extern TetrisEvents tetrisEvents;
 
 extern bool holdPieceOnPress;
 extern bool hardDroppedOnPress;
@@ -39,13 +43,14 @@ public:
 	void updateGameAfterVerticalCollision(TetrisPiece piece);
 	void moveRowsDownAfterClearing(int clearedRow);
 
-	void hardDropCurrentPiece();
 	void movePieceDownToLowestPoint(TetrisPiece& piece, std::vector<sf::Vector2f>& gridPoints);
 	void rotatePiece();
 	void movePieceLeft();
 	void movePieceRight();
 	void holdPiece();
 	void moveCurrentPieceDown();
+	void hardDropCurrentPiece();
+	void addToScore();
 
 	void printGridPositions();
 
@@ -53,7 +58,6 @@ public:
 	TetrisPiece grabTopPreviewPiece();
 
 	std::vector<std::vector<Cell>> grid;
-	std::vector<TetrisPiece> nextPieces;
 	~GameArea();
 
 private:
@@ -61,7 +65,7 @@ private:
 	void setGridPoints(std::vector<sf::Vector2f>& gridPoints, std::vector<sf::Vector2f> newGridPoints);
 	void moveGridPoints(std::vector<sf::Vector2f>& gridPoints, sf::Vector2f amount);
 	void autoMoveCurrentPieceDown();
-	void checkLossConditions();
+	bool isToppedOut(std::vector<TetrisBlock> pieceBlocks);
 	void resetGame();
 
 	sf::RectangleShape gameAreaVisual;

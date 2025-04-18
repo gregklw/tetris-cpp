@@ -4,6 +4,7 @@
 #include "../header/Cell.h"
 #include "../header/GameInfo.h"
 #include "../header/GameUI.h"
+#include "evh_native.cpp"
 
 extern const int dropTimerCooldown;
 extern const int sensitivityCooldown;
@@ -13,15 +14,25 @@ extern bool hardDroppedOnPress;
 extern bool rotateOnPress;
 
 GameArea gameArea = GameArea(gameAreaPosition);
+GameUI gameUI = GameUI();
 
 int main()
 {
+	CSource source;
+	CReceiver receiver;
+
+	receiver.hookEvent(&source);
+	__raise source.MyEvent(123);
+	receiver.unhookEvent(&source);
+
+
+
 	auto window = sf::RenderWindow(sf::VideoMode({ 1280u, 720u }), "CMake SFML Project");
 	window.setFramerateLimit(144);
 
 	int sensitivityTimer = 0;
 
-	initUI();
+	//initUI();
 	while (window.isOpen())
 	{
 		while (const std::optional event = window.pollEvent())
@@ -96,8 +107,7 @@ int main()
 
 		window.clear();
 		gameArea.update(window);
-		gameArea.previewHardDrop(window);
-		displayGameUI(window);
+		gameUI.displayGameUI(window);
 
 		window.display();
 	}
