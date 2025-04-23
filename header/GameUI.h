@@ -31,9 +31,6 @@ public:
 	void displayGameUI(sf::RenderWindow& window);
 	void updateScore();
 
-
-	//std::vector<TetrisPiece> previewPieces;
-
 	//Score Display
 	sf::Text scoreText;
 	~GameUI();

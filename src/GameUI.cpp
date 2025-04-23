@@ -2,7 +2,7 @@
 
 GameUI::GameUI() : holdBoxText(font), nextText(font), scoreText(font)
 {
-	font = sf::Font("../fonts/tetra.ttf");
+	font = sf::Font("../fonts/arial.ttf");
 
 	setupText(holdBoxText, "Hold", 24, sf::Color::Red, sf::Text::Bold);
 

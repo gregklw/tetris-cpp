@@ -13,8 +13,8 @@ extern bool holdPieceOnPress;
 extern bool hardDroppedOnPress;
 extern bool rotateOnPress;
 
-GameArea gameArea = GameArea(gameAreaPosition);
 GameUI gameUI = GameUI();
+GameArea gameArea = GameArea(gameAreaPosition);
 
 int main()
 {

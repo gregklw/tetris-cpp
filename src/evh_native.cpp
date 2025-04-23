@@ -19,6 +19,8 @@ public:
         printf_s("MyHandler2 was called with value %d.\n", nValue);
     }
 
+    //events work like a stack: LIFO
+
     //subscribe event handler to delegate
     void hookEvent(CSource* pSource) {
         __hook(&CSource::MyEvent, pSource, &CReceiver::MyHandler1);
